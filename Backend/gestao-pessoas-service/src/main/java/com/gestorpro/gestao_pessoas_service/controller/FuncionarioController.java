@@ -16,7 +16,7 @@ public class FuncionarioController {
     @Autowired // Injeção de dependência: O Spring nos dará uma instância do repositório.
     private FuncionarioRepository funcionarioRepository;
 
-    // Endpoint para criar um novo funcionário (HTTP POST)
+    // Endpoint para criar um novo funcionário (HTTP POST) 
     @PostMapping
     public ResponseEntity<Funcionario> criarFuncionario(@RequestBody Funcionario novoFuncionario) {
         Funcionario funcionarioSalvo = funcionarioRepository.save(novoFuncionario);
