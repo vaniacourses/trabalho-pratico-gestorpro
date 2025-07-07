@@ -1,6 +1,7 @@
 package com.gestorpro.gestao_pessoas_service.service;
 
 import com.gestorpro.gestao_pessoas_service.dto.BeneficioDto;
+import com.gestorpro.gestao_pessoas_service.dto.BeneficioResponseDto;
 import com.gestorpro.gestao_pessoas_service.model.Beneficio;
 import com.gestorpro.gestao_pessoas_service.model.Funcionario;
 import com.gestorpro.gestao_pessoas_service.repository.BeneficioRepository;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ServicoDeBeneficios {
@@ -21,24 +23,26 @@ public class ServicoDeBeneficios {
     private FuncionarioRepository funcionarioRepository;
 
     @Transactional
-    public Beneficio concederBeneficio(BeneficioDto beneficioDto) {
-        // 1. Busca o funcionário pelo ID informado no DTO
+    public BeneficioResponseDto concederBeneficio(BeneficioDto beneficioDto) {
         Funcionario funcionario = funcionarioRepository.findById(beneficioDto.getIdFuncionario())
                 .orElseThrow(() -> new RuntimeException("Funcionário com ID " + beneficioDto.getIdFuncionario() + " não encontrado."));
 
-        // 2. Cria uma nova entidade Beneficio a partir dos dados do DTO
         Beneficio novoBeneficio = new Beneficio();
         novoBeneficio.setNome(beneficioDto.getNome());
         novoBeneficio.setDescricao(beneficioDto.getDescricao());
         novoBeneficio.setValor(beneficioDto.getValor());
-        novoBeneficio.setFuncionario(funcionario); // Associa o funcionário encontrado
+        novoBeneficio.setFuncionario(funcionario);
 
-        // 3. Salva o novo benefício no banco de dados
-        return beneficioRepository.save(novoBeneficio);
+        Beneficio beneficioSalvo = beneficioRepository.save(novoBeneficio);
+
+        return paraDto(beneficioSalvo);
     }
 
-    public List<Beneficio> listarPorFuncionario(Integer idFuncionario) {
-        return beneficioRepository.findByFuncionarioIdFuncionario(idFuncionario);
+    public List<BeneficioResponseDto> listarPorFuncionario(Integer idFuncionario) {
+        List<Beneficio> beneficios = beneficioRepository.findByFuncionarioIdFuncionario(idFuncionario);
+        return beneficios.stream()
+                .map(this::paraDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -47,5 +51,21 @@ public class ServicoDeBeneficios {
             throw new RuntimeException("Benefício com ID " + idBeneficio + " não encontrado.");
         }
         beneficioRepository.deleteById(idBeneficio);
+    }
+
+    /**
+     * Método auxiliar privado para converter uma Entidade Beneficio em um BeneficioResponseDto.
+     * Isso centraliza a lógica de conversão e garante que a API sempre retorne o mesmo formato.
+     */
+    private BeneficioResponseDto paraDto(Beneficio beneficio) {
+        BeneficioResponseDto dto = new BeneficioResponseDto();
+        dto.setIdBeneficio(beneficio.getIdBeneficio());
+        dto.setNome(beneficio.getNome());
+        dto.setDescricao(beneficio.getDescricao());
+        dto.setValor(beneficio.getValor());
+        if (beneficio.getFuncionario() != null) {
+            dto.setIdFuncionario(beneficio.getFuncionario().getIdFuncionario());
+        }
+        return dto;
     }
 }

@@ -57,7 +57,12 @@ public class Funcionario {
     @OneToMany(mappedBy = "funcionario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Beneficio> beneficios = new ArrayList<>();
 
-    // Dentro da classe Funcionario.java
     @OneToMany(mappedBy = "funcionario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SolicitacaoAfastamento> solicitacoesAfastamento = new ArrayList<>();
+
+    @OneToMany(mappedBy = "funcionario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RegistroPonto> registrosPonto = new ArrayList<>();
+ 
+    @OneToMany(mappedBy = "funcionario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Salario> salarios = new ArrayList<>();
 }

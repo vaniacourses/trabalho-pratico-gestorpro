@@ -1,5 +1,6 @@
 package com.gestorpro.gestao_pessoas_service.service;
 
+import com.gestorpro.gestao_pessoas_service.dto.RegistroPontoResponseDto;
 import com.gestorpro.gestao_pessoas_service.model.Funcionario;
 import com.gestorpro.gestao_pessoas_service.model.RegistroPonto;
 import com.gestorpro.gestao_pessoas_service.model.StatusPonto;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ServicoDePonto {
@@ -23,12 +25,12 @@ public class ServicoDePonto {
     private FuncionarioRepository funcionarioRepository;
 
     @Transactional
-    public RegistroPonto registrarEntrada(Integer idFuncionario) {
-        // Valida se já não existe um registro de ponto aberto para hoje
+    public RegistroPontoResponseDto registrarEntrada(Integer idFuncionario) {
         registroPontoRepository.findByFuncionarioIdFuncionarioAndData(idFuncionario, LocalDate.now())
-            .ifPresent(r -> {
-                if (r.getHoraSaida() == null) throw new IllegalStateException("Já existe um ponto de entrada registrado hoje sem saída.");
-            });
+                .filter(r -> r.getHoraSaida() == null)
+                .ifPresent(r -> {
+                    throw new IllegalStateException("Já existe um ponto de entrada registrado hoje sem saída.");
+                });
 
         Funcionario funcionario = funcionarioRepository.findById(idFuncionario)
                 .orElseThrow(() -> new RuntimeException("Funcionário não encontrado."));
@@ -39,29 +41,45 @@ public class ServicoDePonto {
         novoPonto.setHoraEntrada(LocalTime.now());
         novoPonto.setStatus(StatusPonto.PENDENTE);
 
-        return registroPontoRepository.save(novoPonto);
+        return paraDto(registroPontoRepository.save(novoPonto));
     }
 
     @Transactional
-    public RegistroPonto registrarSaida(Integer idFuncionario) {
-        // Busca o registro do dia atual que não tenha hora de saída
+    public RegistroPontoResponseDto registrarSaida(Integer idFuncionario) {
         RegistroPonto pontoDoDia = registroPontoRepository.findByFuncionarioIdFuncionarioAndData(idFuncionario, LocalDate.now())
                 .filter(r -> r.getHoraSaida() == null)
                 .orElseThrow(() -> new IllegalStateException("Não há um registro de ponto de entrada aberto para registrar a saída."));
 
         pontoDoDia.setHoraSaida(LocalTime.now());
-        return registroPontoRepository.save(pontoDoDia);
+        return paraDto(registroPontoRepository.save(pontoDoDia));
     }
 
     @Transactional
-    public RegistroPonto validar(Integer idRegistro) {
+    public RegistroPontoResponseDto validar(Integer idRegistro) {
         RegistroPonto registro = registroPontoRepository.findById(idRegistro)
                 .orElseThrow(() -> new RuntimeException("Registro de ponto não encontrado."));
         registro.setStatus(StatusPonto.VALIDADO);
-        return registroPontoRepository.save(registro);
+        return paraDto(registroPontoRepository.save(registro));
     }
-    
-    public List<RegistroPonto> listarPorFuncionario(Integer idFuncionario) {
-        return registroPontoRepository.findByFuncionarioIdFuncionarioOrderByDataDesc(idFuncionario);
+
+    public List<RegistroPontoResponseDto> listarPorFuncionario(Integer idFuncionario) {
+        List<RegistroPonto> registros = registroPontoRepository.findByFuncionarioIdFuncionarioOrderByDataDesc(idFuncionario);
+        return registros.stream()
+                .map(this::paraDto)
+                .collect(Collectors.toList());
+    }
+
+    private RegistroPontoResponseDto paraDto(RegistroPonto registro) {
+        RegistroPontoResponseDto dto = new RegistroPontoResponseDto();
+        dto.setIdRegistro(registro.getIdRegistro());
+        dto.setData(registro.getData());
+        dto.setHoraEntrada(registro.getHoraEntrada());
+        dto.setHoraSaida(registro.getHoraSaida());
+        dto.setStatus(registro.getStatus());
+        dto.setJustificativa(registro.getJustificativa());
+        if (registro.getFuncionario() != null) {
+            dto.setIdFuncionario(registro.getFuncionario().getIdFuncionario());
+        }
+        return dto;
     }
 }
