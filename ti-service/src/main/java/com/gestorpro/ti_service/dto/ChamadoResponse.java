@@ -6,10 +6,11 @@ import java.time.LocalDateTime;
 
 public record ChamadoResponse(
         Long id,
-        String titulo,
+        String tipoProblema,
+        String urgencia,
+        String solicitanteEmail,
         Status status,
-        String solicitanteEmail
+        LocalDateTime dataHoraCriacao
 ) {
-    public ChamadoResponse(Long id, String tipoProblema, String urgencia, String solicitanteEmail, Status status, LocalDateTime dataHoraCriacao) {
-    }
+
 }
