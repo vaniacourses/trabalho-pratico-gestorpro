@@ -9,6 +9,7 @@
     <module>gateway-service</module>
     <module>teste-service</module>
     <module>jwt-utils</module>
+    <module>admin-service</module>
   </modules>
   <dependencyManagement>
     <dependencies>

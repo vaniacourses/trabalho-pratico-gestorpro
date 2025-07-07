@@ -23,12 +23,18 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtUserAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JwtTokenService jwtTokenService; // Service que definimos anteriormente
+    private JwtTokenService jwtTokenService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // Verifica se o endpoint requer autenticação antes de processar a requisição
-        
+        String path = request.getRequestURI();
+
+        if (path.startsWith("/public/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String token = recoveryToken(request); // Recupera o token do cabeçalho Authorization da requisição
         if (token != null) {
             String subject = jwtTokenService.getSubjectFromToken(token); // Obtém o assunto (neste caso, o nome de usuário) do token
@@ -39,7 +45,10 @@ public class JwtUserAuthenticationFilter extends OncePerRequestFilter {
             // Define o objeto de autenticação no contexto de segurança do Spring Security
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } else {
-            throw new RuntimeException("O token está ausente.");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
+    	    response.setContentType("application/json");
+    	    response.getWriter().write("{\"error\": \"Token ausente ou inválido.\"}");
+	    return;
         }
         
         filterChain.doFilter(request, response); // Continua o processamento da requisição
