@@ -9,7 +9,6 @@ import java.util.List;
 @Repository
 public interface SalarioRepository extends JpaRepository<Salario, Integer> {
 
-    // Método personalizado para buscar todos os registos de salário de um funcionário específico.
-    List<Salario> findByFuncionario_IdFuncionario(Integer idFuncionario);
-
+    // Busca o histórico de salários de um funcionário, ordenado pela data mais recente.
+    List<Salario> findByFuncionarioIdFuncionarioOrderByDataPagamentoDesc(Integer idFuncionario);
 }

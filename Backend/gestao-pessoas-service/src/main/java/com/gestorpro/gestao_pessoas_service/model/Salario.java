@@ -21,16 +21,12 @@ public class Salario {
     @Column(name = "id_salario")
     private Integer idSalario;
 
-    // Usar BigDecimal é a melhor prática para valores monetários em Java.
-    // A anotação @Column define a precisão e escala para corresponder ao seu SQL.
-    @Column(nullable = false, precision = 8, scale = 2)
+    @Column(nullable = false, precision = 10, scale = 2) // Aumentando a precisão para salários maiores
     private BigDecimal valor;
 
     @Column(name = "data_pagamento", nullable = false)
     private LocalDate dataPagamento;
 
-    // --- RELACIONAMENTO COM FUNCIONÁRIO ---
-    // Muitos Salarios podem pertencer a Um Funcionário.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_funcionario", nullable = false)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

@@ -10,28 +10,34 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "PontoEletronico")
+@Table(name = "RegistroPonto")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PontoEletronico {
+public class RegistroPonto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_ponto")
-    private Integer idPonto;
+    @Column(name = "id_registro")
+    private Integer idRegistro;
 
-    @Column(name = "data_registro", nullable = false)
-    private LocalDate dataRegistro;
+    @Column(nullable = false)
+    private LocalDate data;
 
     @Column(name = "hora_entrada", nullable = false)
     private LocalTime horaEntrada;
 
-    // A hora de saída pode ser nula se o funcionário ainda não tiver batido o ponto de saída.
-    @Column(name = "hora_saida")
+    @Column(name = "hora_saida") // Saída pode ser nula se o funcionário ainda não bateu o ponto
     private LocalTime horaSaida;
 
-    // --- RELACIONAMENTO COM FUNCIONÁRIO ---
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private StatusPonto status;
+    
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String justificativa; // Para quando um gestor rejeita ou edita o ponto
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_funcionario", nullable = false)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

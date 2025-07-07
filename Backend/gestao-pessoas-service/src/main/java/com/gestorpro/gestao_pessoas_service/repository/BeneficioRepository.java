@@ -9,7 +9,6 @@ import java.util.List;
 @Repository
 public interface BeneficioRepository extends JpaRepository<Beneficio, Integer> {
 
-    // Método para buscar todos os benefícios de um funcionário específico.
-    List<Beneficio> findByFuncionario_IdFuncionario(Integer idFuncionario);
-
+    // Método customizado para buscar todos os benefícios de um funcionário específico.
+    List<Beneficio> findByFuncionarioIdFuncionario(Integer idFuncionario);
 }

@@ -8,13 +8,7 @@ import java.util.List;
 
 @Repository
 public interface FuncionarioRepository extends JpaRepository<Funcionario, Integer> {
-    // JpaRepository<TipoDaEntidade, TipoDaChavePrimaria>
 
-    // O Spring Data JPA já dá pra gnt
-    // save(funcionario), findById(id), findAll(), deleteById(id)
-
-    // Você também pode criar métodos de busca personalizados.
-    // O Spring entende o nome do método e cria a query automaticamente!
-    // Exemplo: Buscar todos os funcionários de um determinado departamento.
-    List<Funcionario> findByDepartamento(String departamento);
+    // Exemplo de método de busca customizado para encontrar funcionários por parte do nome.
+    List<Funcionario> findByNomeContainingIgnoreCase(String nome);
 }

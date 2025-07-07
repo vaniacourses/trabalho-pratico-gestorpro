@@ -1,7 +1,8 @@
 package com.gestorpro.gestao_pessoas_service.controller;
 
+import com.gestorpro.gestao_pessoas_service.dto.BeneficioDto;
 import com.gestorpro.gestao_pessoas_service.model.Beneficio;
-import com.gestorpro.gestao_pessoas_service.repository.BeneficioRepository;
+import com.gestorpro.gestao_pessoas_service.service.ServicoDeBeneficios;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,31 +11,30 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/beneficios") // Endpoints para benefícios
+@RequestMapping("/rh/beneficios")
 public class BeneficioController {
 
     @Autowired
-    private BeneficioRepository beneficioRepository;
+    private ServicoDeBeneficios servicoDeBeneficios;
 
-    // Endpoint para criar um novo benefício para um funcionário
+    // Endpoint para conceder (criar) um novo benefício
     @PostMapping
-    public ResponseEntity<Beneficio> criarBeneficio(@RequestBody Beneficio novoBeneficio) {
-        // Exemplo de JSON: { "nome": "Vale Refeição", "valor": 650.00, "funcionario": { "idFuncionario": 1 } }
-        Beneficio beneficioSalvo = beneficioRepository.save(novoBeneficio);
-        return new ResponseEntity<>(beneficioSalvo, HttpStatus.CREATED);
+    public ResponseEntity<Beneficio> concederBeneficio(@RequestBody BeneficioDto beneficioDto) {
+        Beneficio novoBeneficio = servicoDeBeneficios.concederBeneficio(beneficioDto);
+        return new ResponseEntity<>(novoBeneficio, HttpStatus.CREATED);
     }
 
-    // Endpoint para listar todos os benefícios registados
-    @GetMapping
-    public ResponseEntity<List<Beneficio>> listarTodosBeneficios() {
-        List<Beneficio> todosOsBeneficios = beneficioRepository.findAll();
-        return new ResponseEntity<>(todosOsBeneficios, HttpStatus.OK);
-    }
-
-    // Endpoint para listar todos os benefícios de um funcionário específico
+    // Endpoint para listar todos os benefícios de um funcionário
     @GetMapping("/funcionario/{idFuncionario}")
-    public ResponseEntity<List<Beneficio>> listarBeneficiosPorFuncionario(@PathVariable Integer idFuncionario) {
-        List<Beneficio> beneficiosDoFuncionario = beneficioRepository.findByFuncionario_IdFuncionario(idFuncionario);
-        return new ResponseEntity<>(beneficiosDoFuncionario, HttpStatus.OK);
+    public ResponseEntity<List<Beneficio>> listarPorFuncionario(@PathVariable Integer idFuncionario) {
+        List<Beneficio> beneficios = servicoDeBeneficios.listarPorFuncionario(idFuncionario);
+        return ResponseEntity.ok(beneficios);
+    }
+
+    // Endpoint para revogar (deletar) um benefício
+    @DeleteMapping("/{idBeneficio}")
+    public ResponseEntity<Void> revogarBeneficio(@PathVariable Integer idBeneficio) {
+        servicoDeBeneficios.revogarBeneficio(idBeneficio);
+        return ResponseEntity.noContent().build(); // Retorna 204 No Content, indicando sucesso na remoção
     }
 }

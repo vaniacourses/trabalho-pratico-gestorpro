@@ -1,5 +1,8 @@
 package com.gestorpro.gestao_pessoas_service.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,6 +25,7 @@ public class Funcionario {
     @Column(name = "nome", nullable = false, length = 100)
     private String nome;
 
+    // ... todos os outros atributos de Funcionario ...
     @Column(name = "cargo", nullable = false, length = 50)
     private String cargo;
 
@@ -37,13 +41,23 @@ public class Funcionario {
     @Column(name = "telefone", length = 20)
     private String telefone;
 
-    // --- RELACIONAMENTO COM USUÁRIO ---
-    @OneToOne(cascade = CascadeType.ALL) // Garante que ao salvar um Funcionario, o Usuario associado também seja salvo.
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(
-        name = "usuario_email", // Nome da coluna de chave estrangeira na tabela Funcionario.
-        referencedColumnName = "email", // Coluna na tabela Usuario que será referenciada.
-        nullable = false, // Um funcionário DEVE ter um usuário.
-        unique = true // Cada funcionário tem um usuário único.
+        name = "usuario_email",
+        referencedColumnName = "email",
+        nullable = false,
+        unique = true
     )
     private Usuario usuario;
+
+    // 2. INICIALIZE AS LISTAS DIRETAMENTE NA DECLARAÇÃO
+    @OneToMany(mappedBy = "funcionario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Contrato> contratos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "funcionario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Beneficio> beneficios = new ArrayList<>();
+
+    // Dentro da classe Funcionario.java
+    @OneToMany(mappedBy = "funcionario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SolicitacaoAfastamento> solicitacoesAfastamento = new ArrayList<>();
 }

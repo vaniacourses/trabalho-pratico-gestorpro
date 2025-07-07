@@ -9,8 +9,7 @@ import java.util.List;
 @Repository
 public interface ContratoRepository extends JpaRepository<Contrato, Integer> {
 
-    // O Spring Data JPA criará este método automaticamente para nós!
-    // Ele vai buscar todos os contratos que pertencem a um funcionário específico.
-    List<Contrato> findByFuncionario_IdFuncionario(Integer idFuncionario);
+    // Método para buscar todos os contratos de um funcionário específico.
+    List<Contrato> findByFuncionarioIdFuncionario(Integer idFuncionario);
 
 }
