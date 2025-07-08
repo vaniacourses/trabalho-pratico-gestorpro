@@ -1,0 +1,9 @@
+.navbar {
+    width: 100%;
+}
+
+.navbar-brand .logo-icon {
+            width: 32px;
+            height: 32px;
+            color: var(--text-dark);
+}

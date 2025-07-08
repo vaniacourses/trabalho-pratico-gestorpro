@@ -1,8 +1,7 @@
-import React from 'react';
 import DashboardCard from '../components/DashboardCard';
 import '../components/Dashboard.css';
 
-const DashboardPage: React.FC = () => {
+const DashboardPage = () => {
   return (
     <main className="container my-4 my-md-5">
       <div className="row">

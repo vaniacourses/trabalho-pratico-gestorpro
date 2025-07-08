@@ -2,11 +2,6 @@ import React, { createContext, useState, useEffect, type ReactNode } from 'react
 import api from '../services/api';
 import { isAxiosError } from 'axios';
 
-interface User {
-  name: string;
-  email: string;
-}
-
 interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -21,8 +16,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Novo estado para controlar a autenticação
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -79,7 +73,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const logout = () => {
-    setUser(null);
     sessionStorage.removeItem('authToken');
     delete api.defaults.headers.common['Authorization'];
   };

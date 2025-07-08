@@ -9,6 +9,7 @@ import ProtectedLayout from './components/ProtectedLayout.tsx';
 import { AuthProvider } from './contexts/AuthContext';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import ITPage from './pages/ITPage.tsx';
 
 const routes: RouteObject[] = [
   {
@@ -20,7 +21,7 @@ const routes: RouteObject[] = [
     children: [
       {
         path: '/ti',
-        element: <App />
+        element: <ITPage />
       },
       {
         path: '/fin',
