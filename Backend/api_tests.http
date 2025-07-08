@@ -1,0 +1,56 @@
+###
+# 1. FAZER LOGIN (Como Funcionário Comum)
+# Este request bate no Gateway na porta 8080 (se for o seu caso), que o redireciona para o auth-service.
+# Ele retorna um token JWT que será capturado e salvo em uma variável global chamada "jwt_token".
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "email": "joao.silva@empresa.com",
+  "password": "1234"
+}
+
+> {%
+    client.global.set("jwt_token", response.body.token);
+%}
+
+
+###
+# 2. ABRIR UM NOVO CHAMADO (Usando o Token do Funcionário Comum)
+# Este request usa a variável {{jwt_token}} para se autenticar.
+POST http://localhost:8080/chamados-suporte
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+  "tipoProblema": "Minha VPN parou de funcionar",
+  "urgencia": "Alta"
+}
+
+
+###
+# 3. VER MEUS CHAMADOS
+GET http://localhost:8080/chamados-suporte/meus-chamados
+Authorization: Bearer {{jwt_token}}
+
+
+###
+# 4. FAZER LOGIN (Como TI) para obter um novo token com mais permissões
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "email": "ana.ti@empresa.com",
+  "password": "5678"
+}
+
+> {%
+    client.global.set("jwt_token", response.body.token);
+%}
+
+
+###
+# 5. LISTAR TODOS OS CHAMADOS (Como TI)
+# Este request agora usa o token da "ana.ti", que tem a permissão necessária.
+GET http://localhost:8080/chamados-suporte
+Authorization: Bearer {{jwt_token}}
