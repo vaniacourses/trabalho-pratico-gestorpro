@@ -3,6 +3,7 @@ package com.gestorpro.gestao_pessoas_service.controller;
 import com.gestorpro.gestao_pessoas_service.dto.FuncionarioCreateDto;
 import com.gestorpro.gestao_pessoas_service.dto.FuncionarioDto;
 import com.gestorpro.gestao_pessoas_service.dto.FuncionarioUpdateDto;
+import com.gestorpro.gestao_pessoas_service.event.FuncionarioProducer;
 import com.gestorpro.gestao_pessoas_service.model.Funcionario;
 import com.gestorpro.gestao_pessoas_service.service.ServicoFuncionario;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,16 @@ public class FuncionarioController {
     @Autowired
     private ServicoFuncionario servicoFuncionario;
 
+    @Autowired
+    private FuncionarioProducer funcionarioProducer;
+
     @PostMapping
     public ResponseEntity<FuncionarioDto> contratarFuncionario(@RequestBody FuncionarioCreateDto createDto) {
         Funcionario novoFuncionario = servicoFuncionario.contratar(createDto);
         // Converte a entidade criada para o DTO de resposta
         FuncionarioDto responseDto = servicoFuncionario.buscarPorId(novoFuncionario.getIdFuncionario());
+
+        funcionarioProducer.sendFuncionarioCriado(responseDto);
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
