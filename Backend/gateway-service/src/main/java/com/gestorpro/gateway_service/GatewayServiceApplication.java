@@ -20,8 +20,20 @@ public class GatewayServiceApplication {
 	            .path("/auth/**")
 	            .uri("http://localhost:8081"))
 			.route(p -> p
+				.path("/rh/**")
+				.uri("http://localhost:8082"))
+			.route(p -> p
+				.path("/ti/**")
+				.uri("http://localhost:8083"))		
+			.route(p -> p
+				.path("/fin/**")
+				.uri("http://localhost:8084"))	
+			.route(p -> p
+				.path("/gestao/**")
+				.uri("http://localhost:8085"))		
+			.route(p -> p
 				.path("/admin/**")
-				.uri("http://localhost:8082"))	
+				.uri("http://localhost:8086"))		
 	        .build();
 	}
 }
