@@ -1,96 +1,84 @@
-import React, { createContext, useState, useEffect, type ReactNode } from 'react';
+import React, { createContext, useState, useEffect, useContext, type ReactNode } from 'react';
+import { jwtDecode } from 'jwt-decode';
 import api from '../services/api';
-import { isAxiosError } from 'axios';
 
+// Interface para definir a estrutura do objeto de usuário
+interface User {
+  email: string;
+  roles: string[];
+}
+
+// Interface para definir o que o nosso contexto irá fornecer
 interface AuthContextType {
+  user: User | null;
   isAuthenticated: boolean;
-  isLoading: boolean;
   login: (email: string, pass: string) => Promise<void>;
   logout: () => void;
 }
 
-export const AuthContext = createContext<AuthContextType>(null!);
+// Criação do Contexto
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
-export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+// Componente Provedor que conterá toda a lógica
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
 
+  // Efeito que roda uma vez na inicialização para "logar" o usuário
+  // automaticamente se um token válido já existir no armazenamento local.
   useEffect(() => {
-    const loadUserFromToken = async () => {
-      const token = sessionStorage.getItem('authToken');
-
-      if (token) {
-        try {
-          api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-          setIsAuthenticated(true);
-          
-        } catch (error) {
-          console.error("Sessão inválida, limpando token.", error);
-          sessionStorage.removeItem('authToken');
-          setIsAuthenticated(false);
-        }
-      }
-      setIsLoading(false);
-    };
-
-    loadUserFromToken();
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      const decodedToken: { sub: string, roles: string[] } = jwtDecode(token);
+      setUser({ email: decodedToken.sub, roles: decodedToken.roles || [] });
+    }
   }, []);
 
-  const login = async (email: string, pass: string) => {
-    try {
-      const response = await api.post('/auth/login', {
-        email: email,
-        password: pass,
-      });
+  // Função de login que será chamada pelo LoginCard
+  const login = async (email: string, password: string) => {
+    // Chama o endpoint de login da sua API
+    const response = await api.post('/auth/login', { email, password });
+    const accessToken = response.data.token;
 
-      const { token } = response.data; 
-      console.log(token);
-      sessionStorage.setItem('authToken', token);
-      
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    // Salva o token no localStorage para persistir a sessão
+    localStorage.setItem('accessToken', accessToken);
 
-      setIsAuthenticated(true);
-
-      console.log("Login bem-sucedido!");
-
-    } catch (error) {
-      setIsAuthenticated(false);
-      if (isAxiosError(error)) {
-        if (error.response) {
-          console.error('Erro de resposta da API:', error.response.data);
-        } else {
-          console.error('Erro de rede:', error.message);
-        }
-      } else {
-        console.error('Erro inesperado:', error);
-      }
-      throw error;
-    }
+    // Decodifica o token para obter os dados do usuário
+    const decodedToken: { sub: string, roles: string[] } = jwtDecode(accessToken);
+    
+    // Atualiza o estado global com os dados do usuário
+    setUser({ email: decodedToken.sub, roles: decodedToken.roles || [] });
   };
 
+  // Função de logout
   const logout = () => {
-    sessionStorage.removeItem('authToken');
-    delete api.defaults.headers.common['Authorization'];
+    localStorage.removeItem('accessToken');
+    setUser(null);
   };
 
+  // O valor fornecido para todos os componentes filhos
   const value = {
-    isAuthenticated,
-    isLoading,
+    user,
+    isAuthenticated: !!user, // Converte o objeto user (ou null) em um booleano
     login,
-    logout,
+    logout
   };
-  
-  if (isLoading) {
-    return <div>Carregando aplicação...</div>;
-  }
 
   return (
     <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
+};
+
+// Hook customizado para facilitar o uso do contexto em outros componentes
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth deve ser usado dentro de um AuthProvider');
+  }
+  return context;
 };
