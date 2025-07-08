@@ -1,7 +1,11 @@
 ###
+# =============================================================
+# FLUXO 1: FUNCIONÁRIO COMUM (João Silva)
+# =============================================================
+
+###
 # 1. FAZER LOGIN (Como Funcionário Comum)
-# Este request bate no Gateway na porta 8080 (se for o seu caso), que o redireciona para o auth-service.
-# Ele retorna um token JWT que será capturado e salvo em uma variável global chamada "jwt_token".
+# Obtém o token JWT para o usuário 'joao.silva'.
 POST http://localhost:8080/auth/login
 Content-Type: application/json
 
@@ -16,26 +20,49 @@ Content-Type: application/json
 
 
 ###
-# 2. ABRIR UM NOVO CHAMADO (Usando o Token do Funcionário Comum)
-# Este request usa a variável {{jwt_token}} para se autenticar.
-POST http://localhost:8080/chamados-suporte
+# 2. ABRIR UM NOVO CHAMADO
+# Usa o token do João para criar um chamado e captura o ID na variável 'chamado_id'.
+POST http://localhost:8080/ti/abrir-chamado
 Content-Type: application/json
 Authorization: Bearer {{jwt_token}}
 
 {
-  "tipoProblema": "Minha VPN parou de funcionar",
+  "tipoProblema": "Monitor não liga",
   "urgencia": "Alta"
 }
+
+> {%
+    client.global.set("chamado_id", response.body.id);
+%}
 
 
 ###
 # 3. VER MEUS CHAMADOS
-GET http://localhost:8080/chamados-suporte/meus-chamados
+# Verifica se o chamado criado aparece na lista pessoal do João.
+GET http://localhost:8080/ti/meus-chamados
 Authorization: Bearer {{jwt_token}}
 
 
 ###
-# 4. FAZER LOGIN (Como TI) para obter um novo token com mais permissões
+# 4. CANCELAR O PRÓPRIO CHAMADO
+# Usa o token do João e o ID capturado para cancelar o chamado que ele mesmo abriu.
+PUT http://localhost:8080/ti/{{chamado_id}}/cancelar
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+  "motivo": "O problema foi resolvido sozinho, cabo estava solto."
+}
+
+
+###
+# =============================================================
+# FLUXO 2: FUNCIONÁRIO DE TI (Ana TI)
+# =============================================================
+
+###
+# 5. FAZER LOGIN (Como TI)
+# Pega um novo token com permissões de TI.
 POST http://localhost:8080/auth/login
 Content-Type: application/json
 
@@ -50,7 +77,59 @@ Content-Type: application/json
 
 
 ###
-# 5. LISTAR TODOS OS CHAMADOS (Como TI)
-# Este request agora usa o token da "ana.ti", que tem a permissão necessária.
-GET http://localhost:8080/chamados-suporte
+# 6. LISTAR TODOS OS CHAMADOS (Como TI)
+# Usa o token da Ana para ver todos os chamados no sistema.
+GET http://localhost:8080/ti
+Authorization: Bearer {{jwt_token}}
+
+
+###
+# 7. FILTRAR CHAMADOS POR STATUS (Como TI)
+# Testa a funcionalidade de filtro, buscando os chamados cancelados.
+GET http://localhost:8080/ti?status=CANCELADO
+Authorization: Bearer {{jwt_token}}
+
+
+###
+# 8. BUSCAR CHAMADO ESPECÍFICO (Como TI)
+# Busca os detalhes do chamado que o João abriu e cancelou.
+GET http://localhost:8080/ti/{{chamado_id}}
+Authorization: Bearer {{jwt_token}}
+
+
+###
+# 9. REABRIR O CHAMADO CANCELADO (Como TI)
+# Reabre o chamado para documentação e análise.
+PUT http://localhost:8080/ti/{{chamado_id}}/reabrir
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+  "motivo": "Reabrindo para registrar o procedimento de verificação de cabos."
+}
+
+
+###
+# 10. INICIAR ATENDIMENTO (Como TI)
+# Muda o status do chamado reaberto para EM_ANDAMENTO.
+PUT http://localhost:8080/ti/{{chamado_id}}/iniciar-atendimento
+Authorization: Bearer {{jwt_token}}
+
+
+###
+# 11. RESOLVER O CHAMADO (Como TI)
+# Adiciona a solução e muda o status para RESOLVIDO.
+PUT http://localhost:8080/ti/{{chamado_id}}/resolver
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+  "solucao": "Orientado o usuário a verificar conexões de energia e vídeo. Problema sanado."
+}
+
+
+###
+# 12. FECHAR O CHAMADO (Como TI)
+# Realiza a ação final de fechar/arquivar o chamado.
+PUT http://localhost:8080/ti/{{chamado_id}}/fechar
 Authorization: Bearer {{jwt_token}}

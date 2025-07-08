@@ -7,7 +7,6 @@ public class EstadoCancelado implements EstadoChamado, PodeFechar, PodeReabrir {
 
     @Override
     public void fechar(ChamadoSuporte chamado, String ator) {
-        // Ação VÁLIDA
         System.out.println("Chamado #" + chamado.getId() + " fechado para arquivamento por " + ator + ". Mudando para o estado FECHADO.");
         chamado.setFechadoPor(ator);
         chamado.setDataFechamento(java.time.LocalDateTime.now());
@@ -17,7 +16,6 @@ public class EstadoCancelado implements EstadoChamado, PodeFechar, PodeReabrir {
 
     @Override
     public void reabrir(ChamadoSuporte chamado, String motivo) {
-        // Ação VÁLIDA
         System.out.println("Chamado #" + chamado.getId() + " reaberto. Motivo: " + motivo + ". Mudando para o estado ABERTO.");
         chamado.setMotivoReabertura(motivo);
         chamado.setEstadoAtual(new EstadoAberto());

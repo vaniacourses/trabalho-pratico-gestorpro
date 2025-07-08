@@ -18,10 +18,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Camada de Serviço para orquestrar toda a lógica de negócio
- * relacionada aos Chamados de Suporte.
- */
 @Service
 public class ChamadoSuporteService {
 
@@ -31,13 +27,6 @@ public class ChamadoSuporteService {
     // @Autowired
     // private IServiceNotificacao notificacaoService;
 
-    /**
-     * Abre um novo chamado de suporte. (RF-26, UC-03)
-     * O solicitante é o próprio autor da requisição.
-     * @param dto Os dados do formulário para abrir o chamado.
-     * @param emailSolicitante O e-mail do usuário autenticado que está abrindo o chamado.
-     * @return Os dados do chamado recém-criado.
-     */
     @Transactional
     public ChamadoResponse abrirChamado(AbrirChamadoRequest dto, String emailSolicitante) {
         ChamadoSuporte novoChamado = new ChamadoSuporte();
@@ -51,10 +40,6 @@ public class ChamadoSuporteService {
         return mapToResponse(chamadoSalvo);
     }
 
-    /**
-     * Inicia o atendimento de um chamado. Ação exclusiva da TI.
-     * @param id O ID do chamado.
-     */
     @Transactional
     public void iniciarAtendimento(Long id) {
         ChamadoSuporte chamado = getChamadoById(id);
@@ -65,11 +50,6 @@ public class ChamadoSuporteService {
         chamadoRepository.save(chamado);
     }
 
-    /**
-     * Resolve um chamado. Ação exclusiva da TI.
-     * @param id O ID do chamado.
-     * @param solucao A descrição da solução aplicada.
-     */
     @Transactional
     public void resolverChamado(Long id, String solucao) {
         ChamadoSuporte chamado = getChamadoById(id);
@@ -80,37 +60,18 @@ public class ChamadoSuporteService {
         chamadoRepository.save(chamado);
     }
 
-    /**
-     * Cancela um chamado. (RF-28 refinado)
-     * Permitido para a equipe de TI (em qualquer chamado) ou para o próprio solicitante.
-     * @param id O ID do chamado.
-     * @param emailAtor O e-mail do usuário executando a ação.
-     * @param rolesAtor As roles do usuário.
-     */
     @Transactional
-    public void cancelarChamado(Long id, String emailAtor, Collection<? extends GrantedAuthority> rolesAtor) {
+    public void cancelarChamado(Long id, String motivo, String emailAtor, Collection<? extends GrantedAuthority> rolesAtor) {
         ChamadoSuporte chamado = getChamadoById(id);
 
-        boolean isTI = rolesAtor.contains(new SimpleGrantedAuthority("ROLE_TI"));
-        boolean isOwner = chamado.getSolicitanteEmail().equalsIgnoreCase(emailAtor);
-
-        if (!isTI && !isOwner) {
-            throw new ForbiddenException("Acesso negado. Você só pode cancelar seus próprios chamados.");
-        }
-
         if (!chamado.podeCancelar()) {
-            throw new BusinessException("O chamado #" + id + " não pode ser cancelado no estado atual: " + chamado.getStatus());
+            throw new BusinessException("O chamado #" + id + " não pode ser cancelado no seu estado atual: " + chamado.getStatus());
         }
-
-        chamado.cancelar("Cancelado por " + emailAtor);
+        chamado.cancelar(motivo);
         chamadoRepository.save(chamado);
     }
 
-    /**
-     * Reabre um chamado que foi resolvido ou cancelado. Ação exclusiva da TI.
-     * @param id O ID do chamado.
-     * @param motivo O motivo da reabertura.
-     */
+
     @Transactional
     public void reabrirChamado(Long id, String motivo) {
         ChamadoSuporte chamado = getChamadoById(id);
@@ -122,12 +83,6 @@ public class ChamadoSuporteService {
         // notificacaoService.notificarEquipeTI("Chamado #" + id + " foi reaberto. Motivo: " + motivo);
     }
 
-    /**
-     * Fecha um chamado para arquivamento. (RF-27)
-     * Ação final e exclusiva da equipe de TI.
-     * @param id O ID do chamado.
-     * @param emailAtor O e-mail do membro da TI que está fechando.
-     */
     @Transactional
     public void fecharChamado(Long id, String emailAtor) {
         ChamadoSuporte chamado = getChamadoById(id);

@@ -21,9 +21,9 @@ public class ControladorChamado {
     @Autowired
     private ChamadoSuporteService chamadoService;
 
-    // --- Endpoints para Qualquer Usuário Autenticado ---
+    // Endpoints para Qualquer Usuário Autenticado
 
-    // ALTERADO: A URL para criar um chamado agora é "/ti/abrir-chamado".
+    // A URL para criar um chamado agora é "/ti/abrir-chamado".
     @PostMapping("/abrir-chamado")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ChamadoResponse> abrirChamado(@Valid @RequestBody AbrirChamadoRequest request,
@@ -42,16 +42,18 @@ public class ControladorChamado {
     @PutMapping("/{id}/cancelar")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> cancelarChamado(@PathVariable Long id,
+                                                @Valid @RequestBody CancelarRequestDTO dto, // <-- AQUI ESTÁ A MUDANÇA
                                                 @RequestHeader("X-Email") String emailAtor,
                                                 Authentication authentication) {
-        chamadoService.cancelarChamado(id, emailAtor, authentication.getAuthorities());
+        // Agora passamos o motivo do DTO para o serviço
+        chamadoService.cancelarChamado(id, dto.motivo(), emailAtor, authentication.getAuthorities());
         return ResponseEntity.noContent().build();
     }
 
 
-    // --- Endpoints Exclusivos para a Equipe de TI ---
+    // Endpoints Exclusivos para a Equipe
 
-    // MANTIDO: GET /ti ainda lista todos os chamados para a equipe de TI.
+    //GET /ti ainda lista todos os chamados para a equipe de TI.
     @GetMapping
     @PreAuthorize("hasRole('TI')")
     public ResponseEntity<List<ChamadoResponse>> listarTodosOsChamados(

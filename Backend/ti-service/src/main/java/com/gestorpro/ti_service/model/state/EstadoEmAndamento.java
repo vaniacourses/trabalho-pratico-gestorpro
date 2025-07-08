@@ -7,7 +7,6 @@ public class EstadoEmAndamento implements EstadoChamado, PodeResolver, PodeCance
 
     @Override
     public void resolver(ChamadoSuporte chamado, String solucao) {
-        // Ação VÁLIDA
         System.out.println("Chamado #" + chamado.getId() + " resolvido. Mudando para o estado RESOLVIDO.");
         chamado.setSolucao(solucao); // Assumindo que a entidade tem este campo
         chamado.setEstadoAtual(new EstadoResolvido());
@@ -16,7 +15,6 @@ public class EstadoEmAndamento implements EstadoChamado, PodeResolver, PodeCance
 
     @Override
     public void cancelar(ChamadoSuporte chamado, String motivo) {
-        // Ação VÁLIDA
         System.out.println("Chamado #" + chamado.getId() + " cancelado durante o atendimento. Mudando para o estado CANCELADO.");
         chamado.setMotivoCancelamento(motivo);
         chamado.setEstadoAtual(new EstadoCancelado());
