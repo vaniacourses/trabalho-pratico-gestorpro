@@ -10,7 +10,6 @@
     <module>teste-service</module>
     <module>jwt-utils</module>
     <module>admin-service</module>
-    <module>ti-service</module>
   </modules>
   <dependencyManagement>
     <dependencies>

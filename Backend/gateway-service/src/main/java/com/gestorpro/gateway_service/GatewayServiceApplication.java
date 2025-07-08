@@ -15,17 +15,13 @@ public class GatewayServiceApplication {
 
 	@Bean
 	public RouteLocator myRoutes(RouteLocatorBuilder builder) {
-		return builder.routes()
-				.route("auth_service_route", p -> p // Adicionar um ID para a rota é uma boa prática
-						.path("/auth/**")
-						.uri("http://localhost:8081"))
-				.route("admin_service_route", p -> p // Supondo que este seja um serviço de admin
-						.path("/admin/**")
-						.uri("http://localhost:8082"))
-
-				.route("ti_service_route", p -> p
-						.path("/ti/**")
-						.uri("http://localhost:8083"))
-				.build();
+	    return builder.routes()
+	        .route(p -> p
+	            .path("/auth/**")
+	            .uri("http://localhost:8081"))
+			.route(p -> p
+				.path("/admin/**")
+				.uri("http://localhost:8082"))	
+	        .build();
 	}
 }
