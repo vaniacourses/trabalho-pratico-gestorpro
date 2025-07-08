@@ -19,7 +19,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@Component
+// @Component
 public class JwtUserAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -27,22 +27,24 @@ public class JwtUserAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        // Verifica se o endpoint requer autenticação antes de processar a requisição
-        
-        String token = recoveryToken(request); // Recupera o token do cabeçalho Authorization da requisição
+        String token = recoveryToken(request);
+
+        // A GRANDE MUDANÇA ESTÁ AQUI:
+        // Nós só tentamos autenticar se um token for encontrado.
         if (token != null) {
-            String subject = jwtTokenService.getSubjectFromToken(token); // Obtém o assunto (neste caso, o nome de usuário) do token
+            String subject = jwtTokenService.getSubjectFromToken(token);
             List<String> roles = jwtTokenService.getRolesFromToken(token);
             // Cria um objeto de autenticação do Spring Security
             Authentication authentication =
                     new UsernamePasswordAuthenticationToken(subject, null, convertRoles2GrantedAuthority(roles));
             // Define o objeto de autenticação no contexto de segurança do Spring Security
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        } else {
-            throw new RuntimeException("O token está ausente.");
         }
         
-        filterChain.doFilter(request, response); // Continua o processamento da requisição
+        // O 'else' que lançava a exceção foi REMOVIDO.
+        // Agora, a requisição sempre continua para o próximo filtro. A decisão de
+        // bloquear a rota (se for privada e não houver autenticação) será do Spring Security.
+        filterChain.doFilter(request, response);
     }
 
     // Recupera o token do cabeçalho Authorization da requisição
