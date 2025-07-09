@@ -1,25 +1,24 @@
 // src/components/TicketList.tsx
-import TicketRow from './TicketRow';
-import TicketFilters from './TicketFilters';
-import { Chamado } from '../pages/ITPage'; // Importa a interface do tipo Chamado
+import TicketRow, { type TicketAction } from './TITicketRow'; // Importa o tipo TicketAction
+import type { Chamado } from '../types/chamado.types';
+import type { User } from '../contexts/AuthContext'; // Importa o tipo User
 
-// A interface define que este componente espera receber um array de 'Chamado'
+// A interface de props agora inclui o user e a função onActionClick
 interface TicketListProps {
   tickets: Chamado[];
+  user: User | null;
+  onActionClick: (action: TicketAction, ticketId: number) => void;
 }
 
-const TicketList: React.FC<TicketListProps> = ({ tickets }) => {
+const TicketList: React.FC<TicketListProps> = ({ tickets, user, onActionClick }) => {
     
-    const handleFilter = (filters: any) => {
-        console.log('Filtrando por:', filters);
-        // A lógica de filtro real seria implementada aqui, fazendo uma nova chamada à API
-    };
-
     return (
         <div className="card p-3">
-            <h4 className="mb-3 fw-bold">Meus Chamados</h4>
+            {/* O título pode ser dinâmico com base na role do usuário */}
+            <h4 className="mb-3 fw-bold">{user?.roles.includes('ROLE_TI') ? 'Todos os Chamados' : 'Meus Chamados'}</h4>
             
-            <TicketFilters onFilter={handleFilter} />
+            {/* O componente de filtros só aparece para a TI */}
+            {user?.roles.includes('ROLE_TI')}
 
             <div className="table-responsive">
                 <table className="table table-hover align-middle bg-white">
@@ -34,13 +33,15 @@ const TicketList: React.FC<TicketListProps> = ({ tickets }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {/* Verifica se a lista de chamados tem itens.
-                          Se tiver, mapeia cada item para um componente TicketRow.
-                          Se não, mostra uma mensagem de "Nenhum chamado encontrado".
-                        */}
                         {tickets.length > 0 ? (
                             tickets.map(ticket => (
-                                <TicketRow key={ticket.id} ticket={ticket} />
+                                // Passando as props recebidas para cada linha da tabela
+                                <TicketRow 
+                                    key={ticket.id} 
+                                    ticket={ticket} 
+                                    user={user} 
+                                    onActionClick={onActionClick} 
+                                />
                             ))
                         ) : (
                             <tr>
