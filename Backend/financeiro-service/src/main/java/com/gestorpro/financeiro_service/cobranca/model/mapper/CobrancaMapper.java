@@ -12,7 +12,10 @@ public interface CobrancaMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "dataEmissao", ignore = true)
     @Mapping(target = "status", ignore = true)
+    @Mapping(target = "devedor", ignore = true)
     Cobranca toEntity(CobrancaRequestDTO dto);
 
+    @Mapping(source = "devedor.email", target = "emailDevedor")
+    @Mapping(source = "devedor.telefone", target = "telefoneDevedor")
     CobrancaResponseDTO toResponseDTO(Cobranca entity);
 }

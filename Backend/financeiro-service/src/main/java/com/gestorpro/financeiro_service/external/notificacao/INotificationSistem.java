@@ -1,5 +1,7 @@
 package com.gestorpro.financeiro_service.external.notificacao;
 
+import com.gestorpro.financeiro_service.pessoa.model.entity.Pessoa;
+
 public interface INotificationSistem {
-    void notificar(String email, String assunto, String mensagem);
+    void notificar(Pessoa pessoa, String assunto, String mensagem);
 }

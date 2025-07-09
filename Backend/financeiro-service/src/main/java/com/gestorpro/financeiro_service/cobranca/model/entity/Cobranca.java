@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import com.gestorpro.financeiro_service.cobranca.model.enums.CobrancaStatus;
+import com.gestorpro.financeiro_service.pessoa.model.entity.Pessoa;
 
 @Entity
 @Table(name = "cobrancas")
@@ -14,11 +15,9 @@ public class Cobranca {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "id_gestor", nullable = false)
-    private Long idGestor;
-
-    @Column(nullable = false)
-    private String projeto;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "email_devedor", referencedColumnName = "email", nullable = false)
+    private Pessoa devedor;
 
     @Column(nullable = false)
     private String descricao;
@@ -36,9 +35,8 @@ public class Cobranca {
     @Column(nullable = false)
     private CobrancaStatus status;
 
-    public Cobranca(Long idGestor, String projeto, String descricao, BigDecimal valor, LocalDate dataVencimento) {
-        this.idGestor = idGestor;
-        this.projeto = projeto;
+    public Cobranca(Pessoa devedor, String descricao, BigDecimal valor, LocalDate dataVencimento) {
+        this.devedor = devedor;
         this.descricao = descricao;
         this.valor = valor;
         this.dataVencimento = dataVencimento;
@@ -58,16 +56,12 @@ public class Cobranca {
         return id;
     }
 
-    public Long getIdGestor() {
-        return idGestor;
+    public Pessoa getDevedor() {
+        return devedor;
     }
 
-    public void setIdGestor(Long idGestor) {
-        this.idGestor = idGestor;
-    }
-
-    public String getProjeto() {
-        return projeto;
+    public void setDevedor(Pessoa devedor) {
+        this.devedor = devedor;
     }
 
     public String getDescricao() {
@@ -92,10 +86,6 @@ public class Cobranca {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public void setProjeto(String projeto) {
-        this.projeto = projeto;
     }
 
     public void setDescricao(String descricao) {

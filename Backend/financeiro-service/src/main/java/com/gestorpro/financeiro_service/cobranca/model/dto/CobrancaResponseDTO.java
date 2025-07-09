@@ -7,18 +7,18 @@ import com.gestorpro.financeiro_service.cobranca.model.enums.CobrancaStatus;
 
 public class CobrancaResponseDTO {
     private Long id;
-    private Long idGestor;
-    private String projeto;
+    private String emailDevedor;
+    private String telefoneDevedor;
     private String descricao;
     private BigDecimal valor;
     private LocalDate dataVencimento;
     private LocalDate dataEmissao;
     private CobrancaStatus status;
 
-    public CobrancaResponseDTO(Long id, Long idGestor, String projeto, String descricao, BigDecimal valor, LocalDate dataEmissao, LocalDate dataVencimento, CobrancaStatus status) {
+    public CobrancaResponseDTO(Long id, String emailDevedor, String telefoneDevedor, String descricao, BigDecimal valor, LocalDate dataEmissao, LocalDate dataVencimento, CobrancaStatus status) {
         this.id = id;
-        this.idGestor = idGestor;
-        this.projeto = projeto;
+        this.emailDevedor = emailDevedor;
+        this.telefoneDevedor = telefoneDevedor;
         this.descricao = descricao;
         this.valor = valor;
         this.dataVencimento = dataVencimento;
@@ -36,20 +36,20 @@ public class CobrancaResponseDTO {
         this.id = id;
     }
 
-    public Long getIdGestor() {
-        return idGestor;
+    public String getEmailDevedor() {
+        return emailDevedor;
     }
 
-    public void setIdGestor(Long idGestor) {
-        this.idGestor = idGestor;
+    public void setEmailDevedor(String emailDevedor) {
+        this.emailDevedor = emailDevedor;
     }
 
-    public String getProjeto() {
-        return projeto;
+    public String getTelefoneDevedor() {
+        return telefoneDevedor;
     }
 
-    public void setProjeto(String projeto) {
-        this.projeto = projeto;
+    public void setTelefoneDevedor(String telefoneDevedor) {
+        this.telefoneDevedor = telefoneDevedor;
     }
 
     public String getDescricao() {
