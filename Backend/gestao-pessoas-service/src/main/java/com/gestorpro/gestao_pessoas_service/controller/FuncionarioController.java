@@ -1,5 +1,6 @@
 package com.gestorpro.gestao_pessoas_service.controller;
 
+import com.gestorpro.gestao_pessoas_service.dto.CreateUserDto;
 import com.gestorpro.gestao_pessoas_service.dto.FuncionarioCreateDto;
 import com.gestorpro.gestao_pessoas_service.dto.FuncionarioDto;
 import com.gestorpro.gestao_pessoas_service.dto.FuncionarioUpdateDto;
@@ -7,6 +8,9 @@ import com.gestorpro.gestao_pessoas_service.dto.UsuarioCreateDto;
 import com.gestorpro.gestao_pessoas_service.dto.UsuarioDto;
 import com.gestorpro.gestao_pessoas_service.model.Funcionario;
 import com.gestorpro.gestao_pessoas_service.service.ServicoFuncionario;
+
+import jakarta.validation.constraints.Null;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +27,12 @@ public class FuncionarioController {
 
     @PostMapping
     public ResponseEntity<FuncionarioDto> contratarFuncionario(@RequestBody FuncionarioCreateDto createDto) {
-        UsuarioCreateDto usuarioCreateDto = new UsuarioCreateDto(createDto.getEmail(), createDto.getSenha(), createDto.getCargo());
+        CreateUserDto usuarioCreateDto = new CreateUserDto(createDto.getEmail(), createDto.getSenha(), createDto.getCargo());
 
         Funcionario novoFuncionario = servicoFuncionario.contratar(createDto, usuarioCreateDto);
         // Converte a entidade criada para o DTO de resposta
-        FuncionarioDto responseDto = servicoFuncionario.buscarPorId(novoFuncionario.getIdFuncionario());
-        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
+        // responseDto = servicoFuncionario.buscarPorId(novoFuncionario.getIdFuncionario());
+        return new ResponseEntity<>(null, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")

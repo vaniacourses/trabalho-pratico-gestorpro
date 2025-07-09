@@ -24,7 +24,8 @@ public class SecurityConfiguration {
 
     public static final String [] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
             "/auth/login", // Url que usaremos para fazer login
-            "/auth/users" // Url que usaremos para criar um usuário
+            "/auth/users", // Url que usaremos para criar um usuário
+            "/auth/create" // Url que usaremos para criar um usuário
     };
 
     @Bean

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UsuarioRepository extends JpaRepository<User, Integer> {
+public interface UsuarioRepository extends JpaRepository<User, Long> {
 
     // Método essencial para o Spring Security encontrar um usuário pelo seu nome de usuário (email).
     Optional<User> findByEmail(String email);

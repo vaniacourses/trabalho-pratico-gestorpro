@@ -1,4 +1,4 @@
-package com.gestorpro.auth_service.model;
+package com.gestorpro.gestao_pessoas_service.model;
 
 public enum RoleName {
     ROLE_ADMIN,

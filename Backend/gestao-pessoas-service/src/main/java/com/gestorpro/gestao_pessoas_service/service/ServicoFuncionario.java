@@ -1,5 +1,6 @@
 package com.gestorpro.gestao_pessoas_service.service;
 
+import com.gestorpro.gestao_pessoas_service.dto.CreateUserDto;
 import com.gestorpro.gestao_pessoas_service.dto.FuncionarioCreateDto;
 import com.gestorpro.gestao_pessoas_service.dto.FuncionarioDto;
 import com.gestorpro.gestao_pessoas_service.dto.FuncionarioUpdateDto;
@@ -13,6 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,12 +57,20 @@ public class ServicoFuncionario {
     }
 
     @Transactional
-    public Funcionario contratar(FuncionarioCreateDto dto, UsuarioCreateDto user) {
+    public Funcionario contratar(FuncionarioCreateDto dto, CreateUserDto user) {
         String url = "http://localhost:8081/auth/create"; // URL do outro microsserviço
-        UsuarioDto usuarioDto = restTemplate.postForObject(url, user, UsuarioDto.class);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<CreateUserDto> request = new HttpEntity<>(user, headers);
+
+        User usuarioDto = restTemplate.postForObject(url, request, User.class);
         
-        User user_1 = User.builder().email(usuarioDto.getEmail()).password(usuarioDto.getSenha()).build();
-        
+        User userBanco = usuarioRepository.findById(usuarioDto.getId())
+        .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+
         // Instancia e usa o Builder para encapsular a lógica de criação
         FuncionarioBuilder builder = new FuncionarioBuilder(
             funcionarioRepository,
@@ -71,7 +84,7 @@ public class ServicoFuncionario {
                 .comCredenciais(dto.getEmail(), dto.getSenha())
                 .comContratoInicial(dto.getTipoContrato(), dto.getJornada())
                 .comSalarioInicial(dto.getSalarioInicial())
-                .setUsuario(user_1)
+                .setUsuario(userBanco)
                 .build();
     }
 

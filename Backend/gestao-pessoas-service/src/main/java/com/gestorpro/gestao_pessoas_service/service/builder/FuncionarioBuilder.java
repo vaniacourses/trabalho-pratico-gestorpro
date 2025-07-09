@@ -75,7 +75,6 @@ public class FuncionarioBuilder {
         novoUsuario.setSenha(this.senha);
         usuarioRepository.save(novoUsuario);*/
 
-
         // Cria e salva o Funcionario, associando o Usuario
         Funcionario novoFuncionario = new Funcionario();
         novoFuncionario.setNome(this.nome);
