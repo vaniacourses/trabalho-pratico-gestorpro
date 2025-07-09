@@ -1,15 +1,51 @@
-import '../components/IT.css';
+import '../components/global.css';
 import { useState } from 'react';
 import Navbar from '../components/Navbar';
-import NewTicketForm from '../components/NewTicketForm';
-import type { FormDataState } from '../components/NewTicketForm'; 
 import TicketList from '../components/TicketList';
+import GenericForm from '../components/GenericForm';
+import type { FormField } from '../components/GenericForm';
 
 const ITPage: React.FC = () => {
     const [isFormVisible, setIsFormVisible] = useState(false);
+    const ticketFields: FormField[] = [
+        {
+            id: 'title',
+            label: 'Título do Chamado',
+            type: 'text',
+            placeholder: 'Ex: Não consigo acessar a impressora',
+            required: true,
+        },
+        {
+            id: 'category',
+            label: 'Categoria',
+            type: 'select',
+            required: true,
+            options: [
+                { value: 'software', label: 'Software' },
+                { value: 'hardware', label: 'Hardware' },
+                { value: 'network', label: 'Rede e Internet' },
+                { value: 'access', label: 'Acessos e Permissões' },
+                { value: 'other', label: 'Outro' },
+            ],
+        },
+        {
+            id: 'description',
+            label: 'Descrição do Problema',
+            type: 'textarea',
+            placeholder: 'Detalhe aqui o problema que você está enfrentando...',
+            rows: 4,
+            required: true,
+        },
+        {
+            id: 'attachment',
+            label: 'Anexar Arquivo (Opcional)',
+            type: 'file',
+            helpText: 'Anexe prints ou documentos que ajudem a descrever o problema.',
+        },
+    ];
 
-    const handleNewTicketSubmit = (ticketData: FormDataState) => {
-        console.log("Dados:", ticketData);
+    const handleNewTicketSubmit = (formData: Record<string, any>) => {
+        console.log("Dados:", formData);
 
         // Chamada a API
         setIsFormVisible(false); 
@@ -37,7 +73,12 @@ const ITPage: React.FC = () => {
                     </button>
                 </div>
                 <div className={`collapse ${isFormVisible ? 'show' : ''}`}>
-                    <NewTicketForm onTicketSubmit={handleNewTicketSubmit} />
+                    <GenericForm
+                        title="Abrir Novo Chamado"
+                        fields={ticketFields}
+                        submitButtonText="Enviar Chamado"
+                        onSubmit={handleNewTicketSubmit}
+                    />
                 </div>
                 <TicketList/>
             </main>

@@ -1,74 +1,92 @@
-// src/components/TicketList.tsx
-import React, { useState, useEffect } from 'react';
-import type { Ticket } from '../types/Ticket';
-import TicketRow from './TicketRow';
-import TicketFilters from './TicketFilters';
+import React, { useState, useEffect, useMemo } from 'react';
+import DataTable from '../components/DataTable';
+import DataFilters from '../components/DataFilters';
+import type { Column, FilterField } from '../types/Data';
 
-// Dados mocados para simular uma API
+type TicketStatus = 'Aberto' | 'Em Andamento' | 'Fechado';
+type TicketPriority = 'Alta' | 'Média' | 'Baixa';
+
+interface Ticket {
+  id: number;
+  priority: TicketPriority;
+  title: string;
+  requester: string;
+  date: string;
+  status: TicketStatus;
+}
+
+const PriorityBadge: React.FC<{ priority: TicketPriority }> = ({ priority }) => {
+  const colorMap: Record<TicketPriority, string> = { 'Alta': 'bg-danger', 'Média': 'bg-warning text-dark', 'Baixa': 'bg-success' };
+  return <span className={`badge ${colorMap[priority]}`}>{priority}</span>;
+};
+
+const StatusBadge: React.FC<{ status: TicketStatus }> = ({ status }) => {
+  const colorMap: Record<TicketStatus, string> = { 'Aberto': 'bg-info text-dark', 'Em Andamento': 'bg-secondary', 'Fechado': 'bg-light text-dark' };
+  return <span className={`badge ${colorMap[status]}`}>{status}</span>;
+};
+
 const mockTickets: Ticket[] = [
-    { id: 1, priority: 'Alta', title: 'Sistema de Faturamento fora do ar', requester: 'Ana Clara', date: '08/07/2025', status: 'Aberto' },
-    { id: 2, priority: 'Média', title: 'Não consigo acessar a impressora', requester: 'Carlos Souza', date: '07/07/2025', status: 'Aberto' },
-    { id: 3, priority: 'Baixa', title: 'Solicitação de novo mouse', requester: 'Mariana Lima', date: '07/07/2025', status: 'Em Andamento' },
+  { id: 1, priority: 'Alta', title: 'Sistema de Faturamento fora do ar', requester: 'Ana Clara', date: '08/07/2025', status: 'Aberto' },
+  { id: 2, priority: 'Média', title: 'Não consigo acessar a impressora', requester: 'Carlos Souza', date: '07/07/2025', status: 'Aberto' },
+  { id: 3, priority: 'Baixa', title: 'Solicitação de novo mouse', requester: 'Mariana Lima', date: '07/07/2025', status: 'Em Andamento' },
+  { id: 4, priority: 'Alta', title: 'Servidor principal não responde', requester: 'Pedro Mota', date: '08/07/2025', status: 'Em Andamento' },
 ];
 
 const TicketList: React.FC = () => {
-    const [tickets, setTickets] = useState<Ticket[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+  const [allTickets, setAllTickets] = useState<Ticket[]>([]);
+  const [filters, setFilters] = useState({ searchTerm: '', status: 'Todos', priority: 'Todas' });
+  const [isLoading, setIsLoading] = useState(true);
 
-    // Simula a busca de dados quando o componente é montado
-    useEffect(() => {
-        setIsLoading(true);
-        // Simula uma chamada de API com um atraso de 1 segundo
-        const timer = setTimeout(() => {
-            setTickets(mockTickets);
-            setIsLoading(false);
-        }, 1000);
+  useEffect(() => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setAllTickets(mockTickets);
+      setIsLoading(false);
+    }, 500);
+  }, []);
 
-        return () => clearTimeout(timer);
-    }, []);
+  const filteredTickets = useMemo(() => {
+    return allTickets.filter(ticket => {
+      const searchMatch = ticket.title.toLowerCase().includes(filters.searchTerm.toLowerCase()) || ticket.id.toString().includes(filters.searchTerm);
+      const statusMatch = filters.status === 'Todos' || ticket.status === filters.status;
+      const priorityMatch = filters.priority === 'Todas' || ticket.priority === filters.priority;
+      return searchMatch && statusMatch && priorityMatch;
+    });
+  }, [allTickets, filters]);
 
-    const handleFilter = (filters: any) => {
-        console.log('Filtrando por:', filters);
-        // Aqui você implementaria a lógica de filtragem real
-    }
+  const handleFilterUpdate = (newFilterValues: Record<string, string>) => {
+    setFilters(currentFilters => ({
+        ...currentFilters,
+        ...newFilterValues,
+    }));
+  };
 
-    if (isLoading) {
-        return <p className="text-center">Carregando chamados...</p>;
-    }
+  const columns: Column<Ticket>[] = [
+    { header: 'Prioridade', cell: (ticket) => <PriorityBadge priority={ticket.priority} /> },
+    { header: 'Título', accessorKey: 'title' },
+    { header: 'Solicitante', accessorKey: 'requester' },
+    { header: 'Data', accessorKey: 'date' },
+    { header: 'Status', cell: (ticket) => <StatusBadge status={ticket.status} /> },
+    { header: 'Ações', cell: () => <a href="#" className="btn btn-sm btn-outline-primary">Detalhes</a> },
+  ];
 
-    return (
-        <div className="card p-3">
-            <h4 className="mb-3 fw-bold">Chamados Aguardando Atendimento</h4>
-            
-            <TicketFilters onFilter={handleFilter} />
+  const filterConfig: FilterField[] = [
+    { id: 'searchTerm', type: 'text', placeholder: 'Buscar por título ou ID...' },
+    { id: 'status', type: 'select', options: [{value: 'Todos', label: 'Todos os Status'}, {value: 'Aberto', label: 'Aberto'}, {value: 'Em Andamento', label: 'Em Andamento'}] },
+    { id: 'priority', type: 'select', options: [{value: 'Todas', label: 'Qualquer Prioridade'}, {value: 'Alta', label: 'Alta'}, {value: 'Média', label: 'Média'}, {value: 'Baixa', label: 'Baixa'}] },
+  ];
 
-            <div className="table-responsive">
-                <table className="table table-hover align-middle bg-white">
-                    <thead className="table-light">
-                        <tr>
-                            <th scope="col">Prioridade</th>
-                            <th scope="col">Título</th>
-                            <th scope="col">Solicitante</th>
-                            <th scope="col">Data</th>
-                            <th scope="col">Status</th>
-                            <th scope="col" className="text-center">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {tickets.length > 0 ? (
-                            tickets.map(ticket => (
-                                <TicketRow key={ticket.id} ticket={ticket} />
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan={6} className="text-center">Nenhum chamado encontrado.</td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    );
+  return (
+    <div className="container mt-4">
+      <DataTable
+        title="Fila de Atendimento - TI"
+        data={filteredTickets}
+        columns={columns}
+        isLoading={isLoading}
+        filterComponent={<DataFilters config={filterConfig} onFilter={handleFilterUpdate} />}
+      />
+    </div>
+  );
 };
 
 export default TicketList;
