@@ -10,6 +10,9 @@
     <module>teste-service</module>
     <module>jwt-utils</module>
     <module>gestao-pessoas-service</module>
+    <module>file-utils</module>
+    <module>admin-service</module>
+    <module>gestao-projetos-service</module>
   </modules>
   <dependencyManagement>
     <dependencies>

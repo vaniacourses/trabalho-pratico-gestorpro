@@ -23,14 +23,19 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtUserAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JwtTokenService jwtTokenService; // Service que definimos anteriormente
+    private JwtTokenService jwtTokenService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = recoveryToken(request);
+        // Verifica se o endpoint requer autenticação antes de processar a requisição
+        String path = request.getRequestURI();
 
-        // A GRANDE MUDANÇA ESTÁ AQUI:
-        // Nós só tentamos autenticar se um token for encontrado.
+        if (path.startsWith("/public/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String token = recoveryToken(request); // Recupera o token do cabeçalho Authorization da requisição
         if (token != null) {
             String subject = jwtTokenService.getSubjectFromToken(token);
             List<String> roles = jwtTokenService.getRolesFromToken(token);
@@ -39,6 +44,11 @@ public class JwtUserAuthenticationFilter extends OncePerRequestFilter {
                     new UsernamePasswordAuthenticationToken(subject, null, convertRoles2GrantedAuthority(roles));
             // Define o objeto de autenticação no contexto de segurança do Spring Security
             SecurityContextHolder.getContext().setAuthentication(authentication);
+        } else {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
+    	    response.setContentType("application/json");
+    	    response.getWriter().write("{\"error\": \"Token ausente ou inválido.\"}");
+	    return;
         }
         
         // O 'else' que lançava a exceção foi REMOVIDO.
