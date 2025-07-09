@@ -3,12 +3,16 @@ package com.gestorpro.gestao_pessoas_service.service;
 import com.gestorpro.gestao_pessoas_service.dto.FuncionarioCreateDto;
 import com.gestorpro.gestao_pessoas_service.dto.FuncionarioDto;
 import com.gestorpro.gestao_pessoas_service.dto.FuncionarioUpdateDto;
+import com.gestorpro.gestao_pessoas_service.dto.UsuarioCreateDto;
+import com.gestorpro.gestao_pessoas_service.dto.UsuarioDto;
 import com.gestorpro.gestao_pessoas_service.model.Funcionario;
+import com.gestorpro.gestao_pessoas_service.model.User;
 import com.gestorpro.gestao_pessoas_service.repository.*;
 import com.gestorpro.gestao_pessoas_service.service.builder.FuncionarioBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,34 +20,44 @@ import java.util.stream.Collectors;
 @Service
 public class ServicoFuncionario {
 
-    // Injeção de todos os repositórios necessários para o Builder
+    private final RestTemplate restTemplate;
+
     @Autowired private FuncionarioRepository funcionarioRepository;
     @Autowired private UsuarioRepository usuarioRepository;
     @Autowired private ContratoRepository contratoRepository;
     @Autowired private SalarioRepository salarioRepository;
+    
+    public ServicoFuncionario(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     @Transactional
     public FuncionarioDto atualizarDados(Integer idFuncionario, FuncionarioUpdateDto dto) {
-        // 1. Busca o funcionário existente no banco
+        // Busca o funcionário existente no banco
         Funcionario funcionario = funcionarioRepository.findById(idFuncionario)
                 .orElseThrow(() -> new RuntimeException("Funcionário com ID " + idFuncionario + " não encontrado."));
 
-        // 2. Atualiza os campos com os novos valores do DTO
+        // Atualiza os campos com os novos valores do DTO
         funcionario.setNome(dto.getNome());
         funcionario.setCargo(dto.getCargo());
         funcionario.setDepartamento(dto.getDepartamento());
         funcionario.setTelefone(dto.getTelefone());
         funcionario.setNivel(dto.getNivel());
 
-        // 3. Salva o funcionário atualizado
+        // Salva o funcionário atualizado
         Funcionario funcionarioSalvo = funcionarioRepository.save(funcionario);
 
-        // 4. Converte para DTO para a resposta
+        // Converte para DTO para a resposta
         return convertToDto(funcionarioSalvo);
     }
 
     @Transactional
-    public Funcionario contratar(FuncionarioCreateDto dto) {
+    public Funcionario contratar(FuncionarioCreateDto dto, UsuarioCreateDto user) {
+        String url = "http://localhost:8081/auth/create"; // URL do outro microsserviço
+        UsuarioDto usuarioDto = restTemplate.postForObject(url, user, UsuarioDto.class);
+        
+        User user_1 = User.builder().email(usuarioDto.getEmail()).password(usuarioDto.getSenha()).build();
+        
         // Instancia e usa o Builder para encapsular a lógica de criação
         FuncionarioBuilder builder = new FuncionarioBuilder(
             funcionarioRepository,
@@ -57,13 +71,14 @@ public class ServicoFuncionario {
                 .comCredenciais(dto.getEmail(), dto.getSenha())
                 .comContratoInicial(dto.getTipoContrato(), dto.getJornada())
                 .comSalarioInicial(dto.getSalarioInicial())
+                .setUsuario(user_1)
                 .build();
     }
 
     public List<FuncionarioDto> listarTodos() {
         return funcionarioRepository.findAll()
                 .stream()
-                .map(this::convertToDto) // Converte cada Funcionario para FuncionarioDto
+                .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 

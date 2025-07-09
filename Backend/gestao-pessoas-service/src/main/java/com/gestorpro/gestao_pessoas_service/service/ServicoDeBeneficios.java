@@ -53,10 +53,6 @@ public class ServicoDeBeneficios {
         beneficioRepository.deleteById(idBeneficio);
     }
 
-    /**
-     * Método auxiliar privado para converter uma Entidade Beneficio em um BeneficioResponseDto.
-     * Isso centraliza a lógica de conversão e garante que a API sempre retorne o mesmo formato.
-     */
     private BeneficioResponseDto paraDto(Beneficio beneficio) {
         BeneficioResponseDto dto = new BeneficioResponseDto();
         dto.setIdBeneficio(beneficio.getIdBeneficio());

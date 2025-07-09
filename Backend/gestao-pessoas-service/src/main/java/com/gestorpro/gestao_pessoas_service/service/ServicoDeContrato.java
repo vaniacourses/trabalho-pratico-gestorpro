@@ -22,17 +22,17 @@ public class ServicoDeContrato {
 
     @Transactional
     public Contrato criarContrato(ContratoDto contratoDto) {
-        // 1. Valida e busca o funcionário
+        // Valida e busca o funcionário
         Funcionario funcionario = funcionarioRepository.findById(contratoDto.getIdFuncionario())
                 .orElseThrow(() -> new RuntimeException("Funcionário com ID " + contratoDto.getIdFuncionario() + " não encontrado."));
 
-        // 2. Cria a nova entidade Contrato
+        // Cria a nova entidade Contrato
         Contrato novoContrato = new Contrato();
         novoContrato.setTipo(contratoDto.getTipo());
         novoContrato.setJornada(contratoDto.getJornada());
         novoContrato.setFuncionario(funcionario);
 
-        // 3. Salva e retorna o novo contrato
+        // Salva e retorna o novo contrato
         return contratoRepository.save(novoContrato);
     }
 

@@ -48,7 +48,7 @@ public class Funcionario {
         nullable = false,
         unique = true
     )
-    private Usuario usuario;
+    private User usuario;
 
     // 2. INICIALIZE AS LISTAS DIRETAMENTE NA DECLARAÇÃO
     @OneToMany(mappedBy = "funcionario", cascade = CascadeType.ALL, orphanRemoval = true)

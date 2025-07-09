@@ -20,6 +20,7 @@ public class FuncionarioBuilder {
     private String senha;
     private String tipoContrato;
     private Integer jornada;
+    private User user;
     private BigDecimal salarioInicial;
 
     // --- Dependências necessárias para a construção ---
@@ -62,37 +63,37 @@ public class FuncionarioBuilder {
         return this;
     }
 
-
     // --- O método final que executa a construção ---
     public Funcionario build() {
         if (nome == null || email == null || senha == null) {
             throw new IllegalStateException("Dados pessoais e credenciais são obrigatórios para a contratação.");
         }
 
-        // 1. Cria e salva o Usuario
+        /* Cria e salva o Usuario
         Usuario novoUsuario = new Usuario();
         novoUsuario.setEmail(this.email);
-        novoUsuario.setSenha(this.senha); // ATENÇÃO: Em um projeto real, a senha deve ser criptografada aqui!
-        usuarioRepository.save(novoUsuario);
+        novoUsuario.setSenha(this.senha);
+        usuarioRepository.save(novoUsuario);*/
 
-        // 2. Cria e salva o Funcionario, associando o Usuario
+
+        // Cria e salva o Funcionario, associando o Usuario
         Funcionario novoFuncionario = new Funcionario();
         novoFuncionario.setNome(this.nome);
         novoFuncionario.setCargo(this.cargo);
         novoFuncionario.setDepartamento(this.departamento);
         novoFuncionario.setTelefone(this.telefone);
         novoFuncionario.setData_admissao(LocalDate.now());
-        novoFuncionario.setUsuario(novoUsuario);
+        novoFuncionario.setUsuario(this.user);
         funcionarioRepository.save(novoFuncionario);
 
-        // 3. Cria e salva o Contrato inicial
+        // Cria e salva o Contrato inicial
         Contrato novoContrato = new Contrato();
         novoContrato.setTipo(this.tipoContrato);
         novoContrato.setJornada(this.jornada);
         novoContrato.setFuncionario(novoFuncionario);
         contratoRepository.save(novoContrato);
 
-        // 4. Cria e salva o Salário inicial (se fornecido)
+        // Cria e salva o Salário inicial (se fornecido)
         if (this.salarioInicial != null) {
             Salario novoSalario = new Salario();
             novoSalario.setValor(this.salarioInicial);
@@ -102,5 +103,10 @@ public class FuncionarioBuilder {
         }
 
         return novoFuncionario;
+    }
+
+    public FuncionarioBuilder setUsuario(User user2) {
+        this.user = user2;
+        return this;
     }
 }
