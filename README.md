@@ -46,7 +46,7 @@ Após a primeira apresentação, as seguintes alterações e novas atribuições
 
 1.  **Diagramas de Sequência de Sistema**: Cada integrante criou o Diagrama de Sequência de Sistema para um dos Diagramas de Sequência feitos anteriormente.
 2.  **Diagramas de Classes por Módulo (Microsserviços)**: O Diagrama de Classes detalhado foi desmembrado em diagramas menores, atendendo às exigências do estilo arquitetural de microsserviços. Cada diagrama representa um dos módulos independentes do sistema, com a seguinte atribuição:
-    * **Diagrama de Classes do Módulo Administrativo**: Igor Rodrigues
+    * **Diagrama de Classes do Módulo Administrativo**: Pedro Moreira
     * **Diagrama de Classes do Módulo de TI**: Yan Novaes
     * **Diagrama de Classes do Módulo Financeiro**: Ricardo Araújo
     * **Diagrama de Classes do Módulo de RH**: Bruno Porto
