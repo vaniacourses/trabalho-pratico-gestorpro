@@ -3,44 +3,53 @@ import Navbar from '../components/Navbar';
 import DataTable from '../components/DataTable';
 import DataFilters from '../components/DataFilters';
 import GenericForm from '../components/GenericForm';
+import finApi from '../services/apiFin';
 import type { Column, FilterField } from '../types/Data'; 
 import type { FormField } from '../components/GenericForm';
 
-type ChargeStatus = 'Pendente' | 'Vencida' | 'Paga' | 'Cancelada';
+type ChargeStatus = 'PENDENTE' | 'VENCIDA' | 'PAGA' | 'CANCELADA';
 
 interface Charge {
   id: number;
-  debtorEmail: string;
-  debtorPhone: string;
-  amount: number;
-  description: string;
-  dueDate: Date;
-  status: ChargeStatus;
+  dataEmissao: Date;
+  emailDevedor: string;
+  telefone: string;
+  valor: number;
+  descricao: string;
+  dataVencimento: Date;
+  status: 'PENDENTE' | 'VENCIDA' | 'PAGA' | 'CANCELADA';
 }
 
-const mockCharges: Charge[] = [
-    { id: 101, debtorEmail: 'ana.clara@email.com', debtorPhone: '21998765432', amount: 1500.50, description: 'Desenvolvimento e implementação do módulo de pagamentos do sistema de e-commerce, incluindo integração com gateways de pagamento e testes de segurança.', dueDate: new Date('2025-07-15T00:00:00'), status: 'Pendente' },
-    { id: 102, debtorEmail: 'carlos.souza@email.com', debtorPhone: '11912345678', amount: 850.00, description: 'Criação de identidade visual completa para a nova marca "Café do Ponto", incluindo logo, paleta de cores e manual da marca.', dueDate: new Date('2025-06-30T00:00:00'), status: 'Vencida' },
-    { id: 103, debtorEmail: 'mariana.lima@email.com', debtorPhone: '31987654321', amount: 3200.00, description: 'Contrato de manutenção mensal para o servidor principal, cobrindo atualizações de segurança, backups e suporte técnico 24/7.', dueDate: new Date('2025-07-01T00:00:00'), status: 'Paga' },
-    { id: 104, debtorEmail: 'pedro.mota@email.com', debtorPhone: '41999998888', amount: 450.75, description: 'Licença anual para o software de edição de vídeo "EditPro Plus".', dueDate: new Date('2025-08-01T00:00:00'), status: 'Pendente' },
-    { id: 105, debtorEmail: 'beatriz.santos@email.com', debtorPhone: '51988887777', amount: 200.00, description: 'Taxa de serviço para cancelamento de assinatura fora do prazo contratual.', dueDate: new Date('2025-05-20T00:00:00'), status: 'Cancelada' },
-];
-
 const FinPage: React.FC = () => {
+//   const { user } = useAuth();
   const [charges, setCharges] = useState<Charge[]>([]);
+  const [allCharges, setAllCharges] = useState<Charge[]>([]); // Para filtro no cliente
   const [isLoading, setIsLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
-  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCharge, setSelectedCharge] = useState<Charge | null>(null);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setCharges(mockCharges);
+  const fetchCharges = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await finApi.get<Charge[]>('/financeiro/cobrancas');
+      const formattedData = response.data.map(charge => ({
+        ...charge,
+        dataVencimento: new Date(charge.dataVencimento),
+        dataEmissao: new Date(charge.dataEmissao),
+      }));
+      setCharges(formattedData);
+      setAllCharges(formattedData);
+    } catch (error) {
+      console.error("Erro ao buscar cobranças:", error);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   }, []);
 
+  useEffect(() => {
+    fetchCharges();
+  }, [fetchCharges]);
 
   const handleOpenModal = (charge: Charge) => {
     setSelectedCharge(charge);
@@ -52,22 +61,27 @@ const FinPage: React.FC = () => {
     setSelectedCharge(null);
   };
 
-  const handleStatusChange = (newStatus: 'Paga' | 'Cancelada') => {
+  const handleStatusChange = async (newStatus: 'PAGA' | 'CANCELADA') => {
     if (!selectedCharge) return;
-
-    setCharges(prev => prev.map(charge => 
-      charge.id === selectedCharge.id ? { ...charge, status: newStatus } : charge
-    ));
-    handleCloseModal();
+    const { id } = selectedCharge;
+    const url = newStatus === 'PAGA' ? `/financeiro/cobrancas/${id}/receber` : `/financeiro/cobrancas/${id}/cancelar`;
+    
+    try {
+      await finApi.put(url);
+      await fetchCharges(); // Recarrega a lista
+      handleCloseModal();
+    } catch (error) {
+      console.error(`Erro ao alterar status da cobrança ${id}:`, error);
+    }
   };
 
   const columns: Column<Charge>[] = [
     { header: 'ID', accessorKey: 'id' },
-    { header: 'Devedor', accessorKey: 'debtorEmail' },
-    { header: 'Valor', cell: (item) => `R$ ${item.amount.toFixed(2)}` },
-    { header: 'Vencimento', cell: (item) => item.dueDate.toLocaleDateString('pt-BR') },
+    { header: 'Devedor', accessorKey: 'emailDevedor' },
+    { header: 'Valor', cell: (item) => `R$ ${item.valor.toFixed(2)}` },
+    { header: 'Vencimento', cell: (item) => item.dataVencimento.toLocaleDateString('pt-BR') },
     { header: 'Status', cell: (item) => {
-      const colors = { Pendente: 'info', Vencida: 'warning', Paga: 'success', Cancelada: 'secondary' };
+      const colors = { PENDENTE: 'info', VENCIDA: 'warning', PAGA: 'success', CANCELADA: 'secondary' };
       return <span className={`badge bg-${colors[item.status]}`}>{item.status}</span>;
     }},
     { header: 'Ações', cell: (item) => (
@@ -81,11 +95,11 @@ const FinPage: React.FC = () => {
   ];
 
   const chargeFormFields: FormField[] = [
-    { id: 'debtorEmail', label: 'E-mail do Devedor', type: 'email', placeholder: 'ex: joao.silva@email.com', required: true },
-    { id: 'debtorPhone', label: 'Telefone do Devedor', type: 'text', placeholder: 'ex: (21) 99999-9999', required: true },
-    { id: 'amount', label: 'Valor da Cobrança (R$)', type: 'number', placeholder: 'ex: 150.50', required: true },
-    { id: 'description', label: 'Descrição da Dívida', type: 'textarea', placeholder: 'Descreva brevemente a cobrança...', required: true },
-    { id: 'dueDate', label: 'Data de Vencimento', type: 'date', required: true },
+    { id: 'emailDevedor', label: 'E-mail do Devedor', type: 'email', placeholder: 'ex: joao.silva@email.com', required: true },
+    { id: 'telefone', label: 'Telefone do Devedor', type: 'text', placeholder: 'ex: (21) 99999-9999', required: true },
+    { id: 'valor', label: 'Valor da Cobrança (R$)', type: 'number', placeholder: 'ex: 150.50', required: true },
+    { id: 'descricao', label: 'Descrição da Dívida', type: 'textarea', placeholder: 'Descreva brevemente a cobrança...', required: true },
+    { id: 'dataVencimento', label: 'Data de Vencimento', type: 'date', required: true },
   ];
   const chargeFilters: FilterField[] = [
     { id: 'id', type: 'text', placeholder: 'Buscar por ID...' },
@@ -97,17 +111,33 @@ const FinPage: React.FC = () => {
       { value: 'Cancelada', label: 'Cancelada' },
     ]},
   ];
-  const handleAddCharge = (formData: Record<string, any>) => {
-    const newCharge: Charge = { id: Math.max(...charges.map(c => c.id)) + 1, debtorEmail: formData.debtorEmail, debtorPhone: formData.debtorPhone, amount: parseFloat(formData.amount), description: formData.description, dueDate: formData.dueDate, status: 'Pendente' };
-    setCharges(prev => [newCharge, ...prev]);
-    setShowAddForm(false);
+  
+  const handleAddCharge = async (formData: Record<string, any>) => {
+    console.log("Cheguei")
+    const requestDto = {
+        ...formData,
+        valor: parseFloat(formData.valor),
+        // dueDate: new Date(formData.dueDate + 'T00:00:00').toISOString()
+    };
+    try {
+      await finApi.post('/financeiro/cobrancas/agendar', requestDto);
+      await fetchCharges();
+      setShowAddForm(false);
+    } catch (error) {
+      console.error("Erro ao agendar cobrança:", error);
+      alert("Falha ao agendar cobrança.");
+    }
   };
+
   const handleFilter = (filters: Record<string, string>) => {
-    setIsLoading(true);
-    let filteredData = mockCharges;
-    if (filters.id) filteredData = filteredData.filter(c => c.id.toString().includes(filters.id));
-    if (filters.status) filteredData = filteredData.filter(c => c.status === filters.status);
-    setTimeout(() => { setCharges(filteredData); setIsLoading(false); }, 500);
+    let filteredData = allCharges;
+    if (filters.id) {
+      filteredData = filteredData.filter(c => c.id.toString().includes(filters.id));
+    }
+    if (filters.status) {
+      filteredData = filteredData.filter(c => c.status === filters.status);
+    }
+    setCharges(filteredData);
   };
 
   return (
@@ -147,17 +177,17 @@ const FinPage: React.FC = () => {
                   <button type="button" className="btn-close" onClick={handleCloseModal}></button>
                 </div>
                 <div className="modal-body">
-                  <p><strong>Devedor:</strong> {selectedCharge.debtorEmail}</p>
-                  <p><strong>Valor:</strong> R$ {selectedCharge.amount.toFixed(2)}</p>
+                  <p><strong>Devedor:</strong> {selectedCharge.emailDevedor}</p>
+                  <p><strong>Valor:</strong> R$ {selectedCharge.valor.toFixed(2)}</p>
                   <p className="fw-semibold">Descrição da Dívida:</p>
-                  <p className="bg-light p-3 rounded">{selectedCharge.description}</p>
+                  <p className="bg-light p-3 rounded">{selectedCharge.descricao}</p>
                 </div>
                 <div className="modal-footer">
                   <button type="button" className="btn btn-secondary" onClick={handleCloseModal}>Fechar</button>
-                  {(selectedCharge.status === 'Pendente' || selectedCharge.status === 'Vencida') && (
+                  {(selectedCharge.status === 'PENDENTE' || selectedCharge.status === 'VENCIDA') && (
                     <>
-                      <button type="button" className="btn btn-danger" onClick={() => handleStatusChange('Cancelada')}>Cancelar Cobrança</button>
-                      <button type="button" className="btn btn-success" onClick={() => handleStatusChange('Paga')}>Marcar como Paga</button>
+                      <button type="button" className="btn btn-danger" onClick={() => handleStatusChange('CANCELADA')}>Cancelar Cobrança</button>
+                      <button type="button" className="btn btn-success" onClick={() => handleStatusChange('PAGA')}>Marcar como Paga</button>
                     </>
                   )}
                 </div>

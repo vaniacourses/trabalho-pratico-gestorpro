@@ -4,14 +4,14 @@ import { createBrowserRouter, RouterProvider, type RouteObject } from 'react-rou
 
 import App from './App.tsx';
 import LoginPage from './pages/LoginPage.tsx';
-import ProtectedLayout from './components/ProtectedLayout.tsx';
-import RootLayout from './components/RootLayout.tsx';
-
-import 'bootstrap/dist/css/bootstrap.min.css';
 import ITPage from './pages/ITPage.tsx';
 import HRPage from './pages/HRPage.tsx';
 import DirectoryPage from './pages/DirectoryPage.tsx';
 import FinPage from './pages/FinPage.tsx';
+import ProtectedLayout from './components/ProtectedLayout.tsx';
+import RootLayout from './components/RootLayout.tsx';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const routes: RouteObject[] = [
   {

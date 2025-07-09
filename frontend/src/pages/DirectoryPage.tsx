@@ -4,7 +4,6 @@ import api_admin from '../services/apiAdmin';
 import '../components/global.css';
 import { useAuth } from '../hooks/useAuth';
 
-
 interface ApiFile {
   name: string;
   isRestricted: boolean;
