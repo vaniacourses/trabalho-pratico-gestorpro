@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gestorpro.gestao_projetos_service.dto.ProjetoFuncionarioDto;
 import com.gestorpro.gestao_projetos_service.model.Projeto;
 import com.gestorpro.gestao_projetos_service.service.FuncionarioService;
 
@@ -32,10 +33,10 @@ public class FuncionarioController {
     }
 
     @GetMapping("/{idFuncionario}/projetos")
-    public ResponseEntity<Set<Projeto>> listarProjetos(
-            @PathVariable Long idFuncionario
+    public ResponseEntity<Set<ProjetoFuncionarioDto>> listarProjetos(
+            @PathVariable Integer idFuncionario
     ) {
-        Set<Projeto> projetos = funcionarioService.listarProjetosDoFuncionario(idFuncionario);
+        Set<ProjetoFuncionarioDto> projetos = funcionarioService.listarProjetosDoFuncionario(idFuncionario);
         return ResponseEntity.ok(projetos);
     }
 }

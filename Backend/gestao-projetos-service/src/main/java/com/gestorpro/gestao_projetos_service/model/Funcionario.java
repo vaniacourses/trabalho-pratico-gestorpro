@@ -1,42 +1,32 @@
 package com.gestorpro.gestao_projetos_service.model;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "Funcionario")
-@Data
+@Getter
+@Setter
+@Table(name = "funcionario")
 public class Funcionario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_funcionario")
-    private Long id;
+    @Column(name = "id")
+    private Integer id;
 
-    @ManyToMany
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(
-        name = "funcionario_projeto",
-        joinColumns = @JoinColumn(name = "id_funcionario"),
-        inverseJoinColumns = @JoinColumn(name = "id_projeto")
+            name = "funcionario_projetos",
+            joinColumns = @JoinColumn(name = "id_funcionario"),
+            inverseJoinColumns = @JoinColumn(name = "id_projeto")
     )
     private Set<Projeto> projetos = new HashSet<>();
-
 }
