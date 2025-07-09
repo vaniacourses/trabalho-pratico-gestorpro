@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gestorpro.auth_service.dto.CreateUserDto;
 import com.gestorpro.auth_service.dto.LoginUserDto;
 import com.gestorpro.auth_service.dto.RecoveryJwtTokenDto;
-import com.gestorpro.auth_service.dto.UserDto;
 import com.gestorpro.auth_service.model.User;
 import com.gestorpro.auth_service.service.UserService;
 
