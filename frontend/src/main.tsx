@@ -1,4 +1,3 @@
-// src/main.tsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider, type RouteObject } from 'react-router-dom';
@@ -12,6 +11,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import ITPage from './pages/ITPage.tsx';
 import HRPage from './pages/HRPage.tsx';
 import HREmployee from './pages/HREmployee.tsx';
+import DirectoryPage from './pages/DirectoryPage.tsx';
 
 const routes: RouteObject[] = [
   {
@@ -47,7 +47,7 @@ const routes: RouteObject[] = [
       },
       {
         path: '/dir',
-        element: <App />
+        element: <DirectoryPage />
       },
     ]
   },
