@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/rh/funcionarios")
 public class FuncionarioController {
@@ -25,14 +26,14 @@ public class FuncionarioController {
     @Autowired
     private ServicoFuncionario servicoFuncionario;
 
-    @PostMapping
-    public ResponseEntity<FuncionarioDto> contratarFuncionario(@RequestBody FuncionarioCreateDto createDto) {
+    @PostMapping("/create")
+    public ResponseEntity<Funcionario> contratarFuncionario(@RequestBody FuncionarioCreateDto createDto) {
         CreateUserDto usuarioCreateDto = new CreateUserDto(createDto.getEmail(), createDto.getSenha(), createDto.getCargo());
 
         Funcionario novoFuncionario = servicoFuncionario.contratar(createDto, usuarioCreateDto);
         // Converte a entidade criada para o DTO de resposta
         // responseDto = servicoFuncionario.buscarPorId(novoFuncionario.getIdFuncionario());
-        return new ResponseEntity<>(null, HttpStatus.CREATED);
+        return new ResponseEntity<>(novoFuncionario, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
@@ -52,6 +53,19 @@ public class FuncionarioController {
         FuncionarioDto funcionario = servicoFuncionario.buscarPorId(id);
         return ResponseEntity.ok(funcionario);
     }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<?> buscarFuncionarioPorEmail(@PathVariable String email) {
+        try{
+            FuncionarioDto funcionatio = servicoFuncionario.buscarPorEmail(email);
+            return ResponseEntity.ok().body(funcionatio);
+        }
+        catch(Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+
+    }
+    
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> demitirFuncionario(@PathVariable Integer id) {

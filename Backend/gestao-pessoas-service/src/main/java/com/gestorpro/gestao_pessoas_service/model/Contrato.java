@@ -15,7 +15,7 @@ public class Contrato {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_contrato")
+    @Column(name = "id")
     private Integer idContrato;
 
     @Column(nullable = false, length = 50)

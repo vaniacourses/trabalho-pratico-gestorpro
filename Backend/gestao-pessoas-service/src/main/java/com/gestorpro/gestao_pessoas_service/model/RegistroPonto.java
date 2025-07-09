@@ -18,7 +18,7 @@ public class RegistroPonto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_registro")
+    @Column(name = "id")
     private Integer idRegistro;
 
     @Column(nullable = false)

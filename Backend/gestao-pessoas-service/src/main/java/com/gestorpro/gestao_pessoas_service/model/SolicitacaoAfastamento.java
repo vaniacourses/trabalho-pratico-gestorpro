@@ -17,7 +17,7 @@ public class SolicitacaoAfastamento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_solicitacao")
+    @Column(name = "id")
     private Integer idSolicitacao;
 
     @Enumerated(EnumType.STRING)

@@ -31,6 +31,7 @@ public class ServicoFuncionario {
     @Autowired private UsuarioRepository usuarioRepository;
     @Autowired private ContratoRepository contratoRepository;
     @Autowired private SalarioRepository salarioRepository;
+    @Autowired private RoleRepository roleRepository;
     
     public ServicoFuncionario(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -58,33 +59,20 @@ public class ServicoFuncionario {
 
     @Transactional
     public Funcionario contratar(FuncionarioCreateDto dto, CreateUserDto user) {
-        String url = "http://localhost:8081/auth/create"; // URL do outro microsserviço
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HttpEntity<CreateUserDto> request = new HttpEntity<>(user, headers);
-
-        User usuarioDto = restTemplate.postForObject(url, request, User.class);
-        
-        User userBanco = usuarioRepository.findById(usuarioDto.getId())
-        .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-
-
         // Instancia e usa o Builder para encapsular a lógica de criação
         FuncionarioBuilder builder = new FuncionarioBuilder(
             funcionarioRepository,
             usuarioRepository,
             contratoRepository,
-            salarioRepository
+            salarioRepository,
+            roleRepository
         );
 
         return builder
                 .comDadosPessoais(dto.getNome(), dto.getCargo(), dto.getDepartamento(), dto.getTelefone())
-                .comCredenciais(dto.getEmail(), dto.getSenha())
+                .comCredenciais(dto.getEmail(), dto.getSenha(), dto.getCargo())
                 .comContratoInicial(dto.getTipoContrato(), dto.getJornada())
                 .comSalarioInicial(dto.getSalarioInicial())
-                .setUsuario(userBanco)
                 .build();
     }
 
@@ -97,6 +85,12 @@ public class ServicoFuncionario {
 
     public FuncionarioDto buscarPorId(Integer idFuncionario) {
         Funcionario funcionario = funcionarioRepository.findById(idFuncionario)
+                .orElseThrow(() -> new RuntimeException("Funcionário não encontrado."));
+        return convertToDto(funcionario);
+    }
+
+    public FuncionarioDto buscarPorEmail(String email) {
+        Funcionario funcionario = funcionarioRepository.findByUsuarioEmail(email)
                 .orElseThrow(() -> new RuntimeException("Funcionário não encontrado."));
         return convertToDto(funcionario);
     }
