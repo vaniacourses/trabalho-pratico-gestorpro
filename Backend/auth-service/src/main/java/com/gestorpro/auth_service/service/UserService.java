@@ -51,7 +51,7 @@ public class UserService {
     }
 
     // Método responsável por criar um usuário
-    public void createUser(CreateUserDto createUserDto) {
+    public User createUser(CreateUserDto createUserDto) {
 
         // Cria um novo usuário com os dados fornecidos
         User newUser = User.builder()
@@ -63,6 +63,6 @@ public class UserService {
                 .build();
 
         // Salva o novo usuário no banco de dados
-        userRepository.save(newUser);
+        return userRepository.save(newUser);
     }
 }
