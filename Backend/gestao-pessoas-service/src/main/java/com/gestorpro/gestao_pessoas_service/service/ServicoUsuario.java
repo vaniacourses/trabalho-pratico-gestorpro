@@ -29,7 +29,7 @@ public class ServicoUsuario {
                 .orElseThrow(() -> new RuntimeException("Usuário com ID " + idUsuario + " não encontrado."));
 
         // Criptografa a nova senha antes de salvar
-        usuario.setSenha(passwordEncoder.encode(dto.getNovaSenha()));
+        usuario.setSenha(dto.getNovaSenha());
 
         usuarioRepository.save(usuario);
     }
