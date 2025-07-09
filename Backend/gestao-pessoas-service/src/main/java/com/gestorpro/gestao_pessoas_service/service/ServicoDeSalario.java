@@ -34,7 +34,7 @@ public class ServicoDeSalario {
 
         Salario salarioSalvo = salarioRepository.save(novoSalario);
         
-        return paraDto(salarioSalvo); // Retorna o DTO
+        return paraDto(salarioSalvo); 
     }
 
     public List<SalarioResponseDto> listarHistoricoPorFuncionario(Integer idFuncionario) {

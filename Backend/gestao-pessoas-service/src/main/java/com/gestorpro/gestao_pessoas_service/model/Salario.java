@@ -18,7 +18,7 @@ public class Salario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_salario")
+    @Column(name = "id")
     private Integer idSalario;
 
     @Column(nullable = false, precision = 10, scale = 2) // Aumentando a precisão para salários maiores

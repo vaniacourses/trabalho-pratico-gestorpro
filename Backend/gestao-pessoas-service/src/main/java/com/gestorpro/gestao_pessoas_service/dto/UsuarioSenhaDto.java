@@ -4,7 +4,5 @@ import lombok.Data;
 
 @Data
 public class UsuarioSenhaDto {
-    // Em um sistema real, você poderia incluir a senha antiga para verificação.
-    // private String senhaAntiga;
     private String novaSenha;
 }

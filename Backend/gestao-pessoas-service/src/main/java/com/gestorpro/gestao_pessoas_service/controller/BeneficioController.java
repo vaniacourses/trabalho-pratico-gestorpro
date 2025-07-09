@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/rh/beneficios") // Usando o /rh/ como base, conforme sua correção
+@RequestMapping("/rh/beneficios")
 public class BeneficioController {
 
     @Autowired
