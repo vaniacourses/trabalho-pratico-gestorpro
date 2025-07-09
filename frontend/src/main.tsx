@@ -10,7 +10,6 @@ import { AuthProvider } from './contexts/AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ITPage from './pages/ITPage.tsx';
 import HRPage from './pages/HRPage.tsx';
-import HREmployee from './pages/HREmployee.tsx';
 import DirectoryPage from './pages/DirectoryPage.tsx';
 
 const routes: RouteObject[] = [
