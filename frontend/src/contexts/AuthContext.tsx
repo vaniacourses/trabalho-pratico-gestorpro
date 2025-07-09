@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect, type ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import api from '../services/api';
 import { isAxiosError } from 'axios';
@@ -23,6 +24,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
+  const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -90,6 +92,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     delete api.defaults.headers.common['Authorization'];
     setUser(null);
     setIsAuthenticated(false);
+    navigate('/login');
   };
 
   const value = {

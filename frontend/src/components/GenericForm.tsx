@@ -4,7 +4,7 @@ import type { ChangeEvent, FormEvent } from 'react';
 export interface FormField {
   id: string;
   label: string;
-  type: 'text' | 'select' | 'textarea' | 'file' | 'email' | 'password' | 'number';
+  type: 'text' | 'select' | 'textarea' | 'file' | 'email' | 'password' | 'number' | 'date';
   placeholder?: string;
   required?: boolean;
   options?: { value: string; label: string }[];

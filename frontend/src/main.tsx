@@ -5,73 +5,40 @@ import { createBrowserRouter, RouterProvider, type RouteObject } from 'react-rou
 import App from './App.tsx';
 import LoginPage from './pages/LoginPage.tsx';
 import ProtectedLayout from './components/ProtectedLayout.tsx';
-import { AuthProvider } from './contexts/AuthContext';
+import RootLayout from './components/RootLayout.tsx';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ITPage from './pages/ITPage.tsx';
 import HRPage from './pages/HRPage.tsx';
 import DirectoryPage from './pages/DirectoryPage.tsx';
+import FinPage from './pages/FinPage.tsx';
 
 const routes: RouteObject[] = [
   {
-    path: '/',
-    element: <App />,
-  },
-  {
-    element: <ProtectedLayout/>,
+    element: <RootLayout />,
     children: [
       {
-        path: '/ti',
-        element: <ITPage />
+        path: '/',
+        element: <App />,
       },
       {
-        path: '/fin',
-        element: <App />
+        element: <ProtectedLayout />,
+        children: [
+          { path: '/ti', element: <ITPage /> },
+          { path: '/fin', element: <FinPage /> },
+          { path: '/admin', element: <App /> },
+          { path: '/rh', element: <HRPage /> },
+          { path: '/profile', element: <App /> },
+          { path: '/projetos', element: <App /> },
+          { path: '/dir', element: <DirectoryPage /> },
+        ]
       },
       {
-        path: '/admin',
-        element: <App />
-      },
-      {
-        path: '/rh',
-        element: <HRPage />
-      },
-      {
-        path: '/profile',
-        element: <App />
-      },
-      {
-        path: '/projetos',
-        element: <App />
-      },
-      {
-        path: '/dir',
-        element: <DirectoryPage />
+        path: '/login',
+        element: <LoginPage />,
       },
     ]
-  },
-  {
-    path: '/rh',
-    element: <ProtectedLayout/>,
-    children: [
-      {
-        element: <App />
-      }
-    ]
-  },
-  {
-    path: '/fin',
-    element: <ProtectedLayout/>,
-    children: [
-      {
-        element: <App />
-      }
-    ]
-  },
-  {
-    path: '/login',
-    element: <LoginPage />,
-  },
+  }
 ];
 
 const router = createBrowserRouter(routes);
@@ -80,8 +47,6 @@ const root = ReactDOM.createRoot(document.getElementById('root')!);
 
 root.render(
   <React.StrictMode>
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <RouterProvider router={router} />
   </React.StrictMode>
 );
