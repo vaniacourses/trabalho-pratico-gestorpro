@@ -26,6 +26,18 @@ A seguir, a distribuição das responsabilidades para a **Entrega 1** do projeto
 7.  **Diagramas de Sequência**: Cada integrante ficou responsável por um caso de uso para diagramar.
 8.  **Diagrama de Classes Detalhado**: Igor Rodrigues.
 
+A seguir, a distribuição das responsabilidades para a **Entrega 2** do projeto:
+
+1. **Explicação dos padrões GRASP/SOLID**: Cada integrante ficou responsável pela refatoração do seu diagrama
+2. **Implementação dos padrões GOF**: 1 por integrante
+3. **Modelo de Linha de Produto**: Bruno
+4. **Implementação de interfaces dos módulos**: 1 por integrante
+5. **Casos de uso transacionais**: PCB e Ricardo
+6. **Caso de uso relacionado a listagem**: Igor
+7. **Implementação da interface gráfica**: Cada integrante ficou responsável pelo seu módulo
+8. **Implementação de persistência**: Cada integrante ficou responsável pelo seu módulo
+9. **Mecanismos arquiteturais para extensibilidade e manutenção**: Yan
+
 ---
 
 ## Alterações Realizadas Após a Primeira Apresentação:
