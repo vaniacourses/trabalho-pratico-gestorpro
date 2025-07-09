@@ -22,6 +22,7 @@ interface Charge {
 
 const FinPage: React.FC = () => {
 //   const { user } = useAuth();
+  
   const [charges, setCharges] = useState<Charge[]>([]);
   const [allCharges, setAllCharges] = useState<Charge[]>([]); // Para filtro no cliente
   const [isLoading, setIsLoading] = useState(true);
