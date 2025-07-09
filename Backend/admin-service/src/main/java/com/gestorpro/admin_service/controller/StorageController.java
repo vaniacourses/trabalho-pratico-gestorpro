@@ -25,7 +25,7 @@ public class StorageController {
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> postMethodName(@RequestBody CreateItemDTO item) {
+    public ResponseEntity<?> criarItem(@RequestBody CreateItemDTO item) {
         if(!(item.tipo().equalsIgnoreCase("patrimonio") || item.tipo().equalsIgnoreCase("descartavel"))){
             return ResponseEntity.badRequest().body("O tipo deve ser \"patrimônio\" ou \"descartavel\"");
         }
