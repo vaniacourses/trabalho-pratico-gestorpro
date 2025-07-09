@@ -7,22 +7,22 @@ import com.gestorpro.financeiro_service.cobranca.model.enums.CobrancaStatus;
 
 public class CobrancaResponseDTO {
     private Long id;
+    private Long idGestor;
     private String projeto;
     private String descricao;
     private BigDecimal valor;
     private LocalDate dataVencimento;
     private LocalDate dataEmissao;
-    private String emailNotificacao;
     private CobrancaStatus status;
 
-    public CobrancaResponseDTO(Long id, String projeto, String descricao, BigDecimal valor, LocalDate dataEmissao, LocalDate dataVencimento, String emailNotificacao, CobrancaStatus status) {
+    public CobrancaResponseDTO(Long id, Long idGestor, String projeto, String descricao, BigDecimal valor, LocalDate dataEmissao, LocalDate dataVencimento, CobrancaStatus status) {
         this.id = id;
+        this.idGestor = idGestor;
         this.projeto = projeto;
         this.descricao = descricao;
         this.valor = valor;
         this.dataVencimento = dataVencimento;
         this.dataEmissao = dataEmissao;
-        this.emailNotificacao = emailNotificacao;
         this.status = status;
     }
 
@@ -34,6 +34,14 @@ public class CobrancaResponseDTO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getIdGestor() {
+        return idGestor;
+    }
+
+    public void setIdGestor(Long idGestor) {
+        this.idGestor = idGestor;
     }
 
     public String getProjeto() {
@@ -74,14 +82,6 @@ public class CobrancaResponseDTO {
 
     public void setDataVencimento(LocalDate dataVencimento) {
         this.dataVencimento = dataVencimento;
-    }
-
-    public String getEmailNotificacao() {
-        return emailNotificacao;
-    }
-
-    public void setEmailNotificacao(String emailNotificacao) {
-        this.emailNotificacao = emailNotificacao;
     }
 
     public CobrancaStatus getStatus() {

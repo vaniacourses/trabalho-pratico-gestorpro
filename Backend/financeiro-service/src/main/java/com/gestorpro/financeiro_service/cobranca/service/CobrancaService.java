@@ -47,7 +47,7 @@ public class CobrancaService {
             throw new ErroComunicacaoBancoException(e.getMessage());
         }
 
-        notifier.notificar(savedCobranca.getEmailNotificacao(), "Cobrança", "Cobrança agendada!");
+        // notifier.notificar(savedCobranca.getEmailNotificacao(), "Cobrança", "Cobrança agendada!");
 
         return mapper.toResponseDTO(savedCobranca);
     }
@@ -61,7 +61,7 @@ public class CobrancaService {
             throw new CobrancaPagaException(id);
         }
 
-        cobranca.atualizarStatus(CobrancaStatus.CANCELADA);
+        cobranca.cancelar();
         Cobranca updatedCobranca = repository.save(cobranca);
         
         return mapper.toResponseDTO(updatedCobranca);
@@ -79,7 +79,7 @@ public class CobrancaService {
             throw new CobrancaPagaException(id);
         }
         
-        cobranca.atualizarStatus(CobrancaStatus.PAGA);
+        cobranca.receber();
         Cobranca updatedCobranca = repository.save(cobranca);
         
         return mapper.toResponseDTO(updatedCobranca);

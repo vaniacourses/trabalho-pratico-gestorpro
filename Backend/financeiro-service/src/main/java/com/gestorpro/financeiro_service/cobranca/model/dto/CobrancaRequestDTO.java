@@ -4,21 +4,29 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class CobrancaRequestDTO {
+    private Long idGestor;
     private String projeto;
     private String descricao;
     private BigDecimal valor;
     private LocalDate dataVencimento;
-    private String emailNotificacao;
 
-    public CobrancaRequestDTO(String projeto, String descricao, BigDecimal valor, LocalDate dataVencimento, String emailNotificacao) {
+    public CobrancaRequestDTO(Long idGestor, String projeto, String descricao, BigDecimal valor, LocalDate dataVencimento) {
+        this.idGestor = idGestor;
         this.projeto = projeto;
         this.descricao = descricao;
         this.valor = valor;
         this.dataVencimento = dataVencimento;
-        this.emailNotificacao = emailNotificacao;
     }
 
     public CobrancaRequestDTO() {}
+
+    public Long getIdGestor() {
+        return idGestor;
+    }
+
+    public void setIdGestor(Long idGestor) {
+        this.idGestor = idGestor;
+    }
 
     public String getProjeto() {
         return projeto;
@@ -36,10 +44,6 @@ public class CobrancaRequestDTO {
         return dataVencimento;
     }
 
-    public String getEmailNotificacao() {
-        return emailNotificacao;
-    }
-
     public void setProjeto(String projeto) {
         this.projeto = projeto;
     }
@@ -54,9 +58,5 @@ public class CobrancaRequestDTO {
 
     public void setDataVencimento(LocalDate dataVencimento) {
         this.dataVencimento = dataVencimento;
-    }
-
-    public void setEmailNotificacao(String emailNotificacao) {
-        this.emailNotificacao = emailNotificacao;
     }
 }

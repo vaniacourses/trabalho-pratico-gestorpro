@@ -14,6 +14,9 @@ public class Cobranca {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "id_gestor", nullable = false)
+    private Long idGestor;
+
     @Column(nullable = false)
     private String projeto;
 
@@ -29,29 +32,38 @@ public class Cobranca {
     @Column(name = "data_emissao", nullable = false)
     private LocalDate dataEmissao;
 
-    @Column(name = "email_notificacao", nullable = false)
-    private String emailNotificacao;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CobrancaStatus status;
 
-    public Cobranca(String projeto, String descricao, BigDecimal valor, LocalDate dataVencimento, String emailNotificacao) {
+    public Cobranca(Long idGestor, String projeto, String descricao, BigDecimal valor, LocalDate dataVencimento) {
+        this.idGestor = idGestor;
         this.projeto = projeto;
         this.descricao = descricao;
         this.valor = valor;
         this.dataVencimento = dataVencimento;
-        this.emailNotificacao = emailNotificacao;
     }
 
     public Cobranca() {}
 
-    public void atualizarStatus(CobrancaStatus status) {
-        this.status = status;
+    public void receber() {
+        this.status = CobrancaStatus.PAGA;
+    }
+
+    public void cancelar() {
+        this.status = CobrancaStatus.CANCELADA;
     }
 
     public Long getId() {
         return id;
+    }
+
+    public Long getIdGestor() {
+        return idGestor;
+    }
+
+    public void setIdGestor(Long idGestor) {
+        this.idGestor = idGestor;
     }
 
     public String getProjeto() {
@@ -72,10 +84,6 @@ public class Cobranca {
 
     public LocalDate getDataVencimento() {
         return dataVencimento;
-    }
-
-    public String getEmailNotificacao() {
-        return emailNotificacao;
     }
 
     public CobrancaStatus getStatus() {
@@ -104,10 +112,6 @@ public class Cobranca {
 
     public void setDataVencimento(LocalDate dataVencimento) {
         this.dataVencimento = dataVencimento;
-    }
-
-    public void setEmailNotificacao(String emailNotificacao) {
-        this.emailNotificacao = emailNotificacao;
     }
 
     public void setStatus(CobrancaStatus status) {

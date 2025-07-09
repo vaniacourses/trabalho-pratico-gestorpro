@@ -35,6 +35,11 @@ public class DespesaController {
         return ResponseEntity.ok(service.reprovarSolicitacao(id, dto));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<DespesaResponseDTO> buscarSolicitacao(@PathVariable int id) {
+        return ResponseEntity.ok(service.getSolicitacao(id));
+    }
+
     @GetMapping("/pendentes")
     public ResponseEntity<List<DespesaResponseDTO>> listarPendentes() {
         return ResponseEntity.ok(service.listarSolicitacoesPendentes());
