@@ -19,7 +19,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@Component
+// @Component
 public class JwtUserAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -37,7 +37,7 @@ public class JwtUserAuthenticationFilter extends OncePerRequestFilter {
 
         String token = recoveryToken(request); // Recupera o token do cabeçalho Authorization da requisição
         if (token != null) {
-            String subject = jwtTokenService.getSubjectFromToken(token); // Obtém o assunto (neste caso, o nome de usuário) do token
+            String subject = jwtTokenService.getSubjectFromToken(token);
             List<String> roles = jwtTokenService.getRolesFromToken(token);
             // Cria um objeto de autenticação do Spring Security
             Authentication authentication =
@@ -51,7 +51,10 @@ public class JwtUserAuthenticationFilter extends OncePerRequestFilter {
 	    return;
         }
         
-        filterChain.doFilter(request, response); // Continua o processamento da requisição
+        // O 'else' que lançava a exceção foi REMOVIDO.
+        // Agora, a requisição sempre continua para o próximo filtro. A decisão de
+        // bloquear a rota (se for privada e não houver autenticação) será do Spring Security.
+        filterChain.doFilter(request, response);
     }
 
     // Recupera o token do cabeçalho Authorization da requisição
