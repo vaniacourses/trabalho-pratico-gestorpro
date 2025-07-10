@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "GestaoProjetosServiceApplication",
+            "request": "launch",
+            "mainClass": "com.gestorpro.gestao_projetos_service.GestaoProjetosServiceApplication",
+            "projectName": "gestao-projetos-service"
+        },
+        {
+            "type": "java",
             "name": "AuthServiceApplication",
             "request": "launch",
             "mainClass": "com.gestorpro.auth_service.AuthServiceApplication",
