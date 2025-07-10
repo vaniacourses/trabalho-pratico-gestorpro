@@ -12,6 +12,7 @@ import ProtectedLayout from './components/ProtectedLayout.tsx';
 import RootLayout from './components/RootLayout.tsx';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import TITicketDetailPage from './pages/TITicketDetailPage.tsx';
 
 const routes: RouteObject[] = [
   {
@@ -25,6 +26,7 @@ const routes: RouteObject[] = [
         element: <ProtectedLayout />,
         children: [
           { path: '/ti', element: <ITPage /> },
+          { path: '/ti/:id', element: <TITicketDetailPage /> },
           { path: '/fin', element: <FinPage /> },
           { path: '/admin', element: <App /> },
           { path: '/rh', element: <HRPage /> },

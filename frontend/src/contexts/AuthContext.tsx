@@ -4,7 +4,7 @@ import { jwtDecode } from 'jwt-decode';
 import api from '../services/api';
 import { isAxiosError } from 'axios';
 
-interface User {
+export interface User {
   email: string;
   roles: string[];
 }
