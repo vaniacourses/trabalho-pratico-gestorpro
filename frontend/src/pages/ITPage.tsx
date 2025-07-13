@@ -5,6 +5,7 @@ import TicketList from '../components/TITicketList';
 import SimpleConfirmationModal from '../components/TISimpleModal';
 import TicketFilters from '../components/TITicketFilters';
 import { useAuth } from '../hooks/useAuth';
+import "../components/global.css"
 
 import type { AbrirChamadoRequest, Chamado, Status } from '../types/chamado.types';
 import type { TicketAction } from '../components/TITicketRow';
@@ -71,11 +72,9 @@ const ITPage: React.FC = () => {
             await chamadoService.abrirChamado(ticketData);
             setIsFormVisible(false);
             await fetchChamados();
-            // alert("Chamado aberto com sucesso!"); REMOVIDO
         } catch (err) {
             console.error("Erro ao abrir o chamado:", err);
-            // alert("Ocorreu um erro ao tentar abrir o chamado. Por favor, verifique os dados e tente novamente."); REMOVIDO
-        } finally {
+            } finally {
             setIsSubmitting(false);
         }
     };

@@ -66,7 +66,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-      const decodedUser = jwtDecode<User>(token);
+      const decoded: any = jwtDecode(token);
+      const decodedUser: User = {
+        email: decoded.sub,
+        roles: decoded.roles ?? [],
+      };
       setUser(decodedUser);
       setIsAuthenticated(true);
 
