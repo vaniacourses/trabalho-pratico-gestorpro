@@ -65,9 +65,10 @@ public class ControladorChamado {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('TI')")
-    public ResponseEntity<ChamadoResponse> buscarChamadoPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(chamadoService.buscarChamadoPorId(id));
+    public ResponseEntity<ChamadoResponse> buscarChamadoPorId(@PathVariable Long id, Authentication authentication) {
+        ChamadoResponse chamadoResponse = chamadoService.buscarChamadoPorId(id, authentication.getAuthorities().stream()
+                .anyMatch(role -> role.getAuthority().equals("ROLE_TI")), authentication.getName());
+        return ResponseEntity.ok(chamadoResponse);
     }
 
     @PutMapping("/{id}/iniciar-atendimento")

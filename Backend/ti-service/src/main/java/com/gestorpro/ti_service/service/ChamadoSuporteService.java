@@ -101,6 +101,16 @@ public class ChamadoSuporteService {
         return mapToResponse(getChamadoById(id));
     }
 
+    public ChamadoResponse buscarChamadoPorId(Long id, Boolean isTI, String email) {
+        ChamadoSuporte chamado = getChamadoById(id);
+        if(chamado.getSolicitanteEmail().equals(email) || isTI){
+            return mapToResponse(getChamadoById(id));
+        }
+        else {
+            throw new ForbiddenException("O chamado #" + id + " não pode ser exibido para você.");
+        }
+    }
+
     public List<ChamadoResponse> listarTodosChamados() {
         return chamadoRepository.findAll().stream()
                 .map(this::mapToResponse)
