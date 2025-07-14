@@ -17,7 +17,7 @@ import com.gestorpro.auth_service.dto.RecoveryJwtTokenDto;
 import com.gestorpro.auth_service.model.User;
 import com.gestorpro.auth_service.service.UserService;
 
-@CrossOrigin(origins = "http://localhost:5173")
+// @CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/auth")
 public class UserController {

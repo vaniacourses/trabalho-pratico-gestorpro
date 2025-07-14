@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const finApi = axios.create({
-  baseURL: 'http://localhost:8084' 
+  baseURL: 'http://localhost:8080' 
 });
 
 finApi.interceptors.request.use(

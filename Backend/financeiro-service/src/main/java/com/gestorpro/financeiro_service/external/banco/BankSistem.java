@@ -13,9 +13,9 @@ public class BankSistem implements IBankSistem {
     @Override
     public void registrarCobranca(Cobranca cobranca) {
         boolean falha = random.nextBoolean();
-        if (falha) {
-            throw new RuntimeException("Sistema de banco fora de ar.");
-        }
+        // if (falha) {
+        //     throw new RuntimeException("Sistema de banco fora de ar.");
+        // }
         System.out.println("Cobrança " + cobranca.getId() + " enviada ao banco!");
     }
 }

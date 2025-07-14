@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "TIServiceApplication",
+            "request": "launch",
+            "mainClass": "com.gestorpro.ti_service.TIServiceApplication",
+            "projectName": "ti-service"
+        },
+        {
+            "type": "java",
             "name": "GestaoProjetosServiceApplication",
             "request": "launch",
             "mainClass": "com.gestorpro.gestao_projetos_service.GestaoProjetosServiceApplication",
@@ -13,10 +20,24 @@
         },
         {
             "type": "java",
+            "name": "FinanceiroServiceApplication",
+            "request": "launch",
+            "mainClass": "com.gestorpro.financeiro_service.FinanceiroServiceApplication",
+            "projectName": "financeiro-service"
+        },
+        {
+            "type": "java",
             "name": "AuthServiceApplication",
             "request": "launch",
             "mainClass": "com.gestorpro.auth_service.AuthServiceApplication",
             "projectName": "auth-service"
+        },
+        {
+            "type": "java",
+            "name": "AdminServiceApplication",
+            "request": "launch",
+            "mainClass": "com.gestorpro.admin_service.AdminServiceApplication",
+            "projectName": "admin-service"
         },
         {
             "type": "java",

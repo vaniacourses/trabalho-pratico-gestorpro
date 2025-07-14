@@ -5,6 +5,7 @@ import com.gestorpro.financeiro_service.cobranca.model.dto.CobrancaResponseDTO;
 import com.gestorpro.financeiro_service.cobranca.service.CobrancaService;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("financeiro/cobrancas")
+@PreAuthorize("hasRole('ROLE_FIN')")
 public class CobrancaController {
     private final CobrancaService service;
 

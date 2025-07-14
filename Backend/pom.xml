@@ -13,6 +13,8 @@
     <module>admin-service</module>
     <module>gestao-projetos-service</module>
     <module>gestao-pessoas-service</module>
+    <module>ti-service</module>
+    <module>financeiro-service</module>
   </modules>
   <dependencyManagement>
     <dependencies>

@@ -15,8 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 @Service
 public class FileStorageService {
-    private String repositoryPath = "../file-repository/public";
-    private String repositoryPathRestricted = "../file-repository/restricted";
+    private String repositoryPath = "./file-repository/public";
+    private String repositoryPathRestricted = "./file-repository/restricted";
 
     private final Path fileStoragePath;
     private final Path fileRestrictedStoragePath;

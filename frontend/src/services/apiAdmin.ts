@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const adminApi = axios.create({
-  baseURL: 'http://localhost:8086' 
+  baseURL: 'http://localhost:8080' 
 });
 
 adminApi.interceptors.request.use(

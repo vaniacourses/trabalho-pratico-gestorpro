@@ -6,12 +6,14 @@ import com.gestorpro.financeiro_service.despesa.model.dto.DespesaResponseDTO;
 import com.gestorpro.financeiro_service.despesa.service.DespesaService;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/financeiro/despesas")
+@PreAuthorize("hasRole('ROLE_FIN')")
 public class DespesaController {
 
     private final DespesaService service;
