@@ -9,7 +9,12 @@
     <module>gateway-service</module>
     <module>teste-service</module>
     <module>jwt-utils</module>
+    <module>file-utils</module>
+    <module>admin-service</module>
+    <module>gestao-projetos-service</module>
     <module>gestao-pessoas-service</module>
+    <module>financeiro-service</module>
+    <module>ti-service</module>
   </modules>
   <dependencyManagement>
     <dependencies>
