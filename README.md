@@ -39,3 +39,14 @@ Após a primeira apresentação, as seguintes alterações e novas atribuições
     * **Diagrama de Classes do Módulo Financeiro**: Ricardo Araújo
     * **Diagrama de Classes do Módulo de RH**: Bruno Porto
     * **Diagrama de Classes do Módulo de Gestão de Projetos**: Pedro Moreira
+
+## Implementação dos Padrões GoF
+
+### Padrão State
+- Local: `ti-service/.../model/state/`
+
+### Padrão Strategy
+- Local: `financeiro-service/.../external/notificacao/`
+
+### Padrão Builder
+- Local: `gestao-pessoas-service/.../service/builder/`
