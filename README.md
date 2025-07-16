@@ -50,3 +50,9 @@ Após a primeira apresentação, as seguintes alterações e novas atribuições
 
 ### Padrão Builder
 - Local: `gestao-pessoas-service/.../service/builder/`
+
+### Padrão Adapter
+- Local: `admin_service/utils/`
+
+### Padrão Chain of Responsability
+- Foi usado no SecurityConfig de cada serviço (implementado pelo próprio SpringBoot)
